@@ -43,13 +43,28 @@
             this.chkDeleteFilesWithSameName = new System.Windows.Forms.CheckBox();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.moveDirectoryBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            this.grdOutput = new System.Windows.Forms.DataGridView();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabGrid = new System.Windows.Forms.TabPage();
+            this.tabOutput = new System.Windows.Forms.TabPage();
+            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.Action = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OriginalImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DuplicateImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OpenFolder = new System.Windows.Forms.DataGridViewButtonColumn();
             this.grpOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabGrid.SuspendLayout();
+            this.tabOutput.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(397, 326);
+            this.btnGo.Location = new System.Drawing.Point(497, 426);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(75, 23);
             this.btnGo.TabIndex = 6;
@@ -73,14 +88,14 @@
             this.txtImageDirectory.Location = new System.Drawing.Point(15, 32);
             this.txtImageDirectory.Name = "txtImageDirectory";
             this.txtImageDirectory.ReadOnly = true;
-            this.txtImageDirectory.Size = new System.Drawing.Size(424, 20);
+            this.txtImageDirectory.Size = new System.Drawing.Size(524, 20);
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.txtImageDirectory_TextChanged);
             // 
             // btnDirectorySelector
             // 
             this.btnDirectorySelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDirectorySelector.Location = new System.Drawing.Point(445, 30);
+            this.btnDirectorySelector.Location = new System.Drawing.Point(545, 30);
             this.btnDirectorySelector.Name = "btnDirectorySelector";
             this.btnDirectorySelector.Size = new System.Drawing.Size(27, 23);
             this.btnDirectorySelector.TabIndex = 2;
@@ -94,7 +109,7 @@
             this.chkTestMode.AutoSize = true;
             this.chkTestMode.Checked = true;
             this.chkTestMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestMode.Location = new System.Drawing.Point(314, 330);
+            this.chkTestMode.Location = new System.Drawing.Point(414, 430);
             this.chkTestMode.Name = "chkTestMode";
             this.chkTestMode.Size = new System.Drawing.Size(77, 17);
             this.chkTestMode.TabIndex = 5;
@@ -113,7 +128,7 @@
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(12, 59);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(460, 79);
+            this.grpOptions.Size = new System.Drawing.Size(560, 79);
             this.grpOptions.TabIndex = 3;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
@@ -121,7 +136,7 @@
             // btnMoveDirectory
             // 
             this.btnMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveDirectory.Location = new System.Drawing.Point(427, 44);
+            this.btnMoveDirectory.Location = new System.Drawing.Point(527, 44);
             this.btnMoveDirectory.Name = "btnMoveDirectory";
             this.btnMoveDirectory.Size = new System.Drawing.Size(27, 23);
             this.btnMoveDirectory.TabIndex = 5;
@@ -147,7 +162,7 @@
             this.txtMoveDirectory.Location = new System.Drawing.Point(197, 46);
             this.txtMoveDirectory.Name = "txtMoveDirectory";
             this.txtMoveDirectory.ReadOnly = true;
-            this.txtMoveDirectory.Size = new System.Drawing.Size(224, 20);
+            this.txtMoveDirectory.Size = new System.Drawing.Size(324, 20);
             this.txtMoveDirectory.TabIndex = 4;
             this.txtMoveDirectory.TextChanged += new System.EventHandler(this.txtMoveDirectory_TextChanged);
             // 
@@ -155,16 +170,16 @@
             // 
             this.lblExtension.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblExtension.AutoSize = true;
-            this.lblExtension.Location = new System.Drawing.Point(280, 21);
+            this.lblExtension.Location = new System.Drawing.Point(380, 21);
             this.lblExtension.Name = "lblExtension";
-            this.lblExtension.Size = new System.Drawing.Size(99, 13);
+            this.lblExtension.Size = new System.Drawing.Size(93, 13);
             this.lblExtension.TabIndex = 1;
-            this.lblExtension.Text = "Extension to Delete";
+            this.lblExtension.Text = "Extension to Keep";
             // 
             // txtExtension
             // 
             this.txtExtension.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExtension.Location = new System.Drawing.Point(385, 18);
+            this.txtExtension.Location = new System.Drawing.Point(485, 18);
             this.txtExtension.Name = "txtExtension";
             this.txtExtension.Size = new System.Drawing.Size(69, 20);
             this.txtExtension.TabIndex = 2;
@@ -183,22 +198,118 @@
             // 
             // txtOutput
             // 
-            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutput.Location = new System.Drawing.Point(12, 144);
+            this.txtOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(460, 176);
+            this.txtOutput.Size = new System.Drawing.Size(446, 144);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
+            // 
+            // grdOutput
+            // 
+            this.grdOutput.AllowUserToAddRows = false;
+            this.grdOutput.AllowUserToDeleteRows = false;
+            this.grdOutput.AllowUserToResizeRows = false;
+            this.grdOutput.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.grdOutput.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.grdOutput.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Action,
+            this.Folder,
+            this.OriginalImage,
+            this.DuplicateImage,
+            this.OpenFolder});
+            this.grdOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grdOutput.Location = new System.Drawing.Point(3, 3);
+            this.grdOutput.Name = "grdOutput";
+            this.grdOutput.ReadOnly = true;
+            this.grdOutput.Size = new System.Drawing.Size(546, 244);
+            this.grdOutput.TabIndex = 7;
+            this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdOutput_CellContentClick);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabGrid);
+            this.tabControl1.Controls.Add(this.tabOutput);
+            this.tabControl1.Location = new System.Drawing.Point(12, 144);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(560, 276);
+            this.tabControl1.TabIndex = 9;
+            // 
+            // tabGrid
+            // 
+            this.tabGrid.Controls.Add(this.grdOutput);
+            this.tabGrid.Location = new System.Drawing.Point(4, 22);
+            this.tabGrid.Name = "tabGrid";
+            this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGrid.Size = new System.Drawing.Size(552, 250);
+            this.tabGrid.TabIndex = 0;
+            this.tabGrid.Text = "Grid";
+            this.tabGrid.UseVisualStyleBackColor = true;
+            // 
+            // tabOutput
+            // 
+            this.tabOutput.Controls.Add(this.txtOutput);
+            this.tabOutput.Location = new System.Drawing.Point(4, 22);
+            this.tabOutput.Name = "tabOutput";
+            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOutput.Size = new System.Drawing.Size(452, 150);
+            this.tabOutput.TabIndex = 1;
+            this.tabOutput.Text = "Output";
+            this.tabOutput.UseVisualStyleBackColor = true;
+            // 
+            // fileSystemWatcher1
+            // 
+            this.fileSystemWatcher1.EnableRaisingEvents = true;
+            this.fileSystemWatcher1.SynchronizingObject = this;
+            // 
+            // Action
+            // 
+            this.Action.HeaderText = "Action";
+            this.Action.Name = "Action";
+            this.Action.ReadOnly = true;
+            this.Action.Width = 62;
+            // 
+            // Folder
+            // 
+            this.Folder.HeaderText = "Folder";
+            this.Folder.Name = "Folder";
+            this.Folder.ReadOnly = true;
+            this.Folder.Width = 61;
+            // 
+            // OriginalImage
+            // 
+            this.OriginalImage.HeaderText = "Original Image";
+            this.OriginalImage.Name = "OriginalImage";
+            this.OriginalImage.ReadOnly = true;
+            this.OriginalImage.Width = 99;
+            // 
+            // DuplicateImage
+            // 
+            this.DuplicateImage.HeaderText = "Duplicate Image";
+            this.DuplicateImage.Name = "DuplicateImage";
+            this.DuplicateImage.ReadOnly = true;
+            this.DuplicateImage.Width = 109;
+            // 
+            // OpenFolder
+            // 
+            this.OpenFolder.HeaderText = "Open Folder";
+            this.OpenFolder.Name = "OpenFolder";
+            this.OpenFolder.ReadOnly = true;
+            this.OpenFolder.Text = "Open Folder";
+            this.OpenFolder.UseColumnTextForButtonValue = true;
+            this.OpenFolder.Width = 71;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 361);
-            this.Controls.Add(this.txtOutput);
+            this.ClientSize = new System.Drawing.Size(584, 461);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.grpOptions);
             this.Controls.Add(this.chkTestMode);
             this.Controls.Add(this.btnDirectorySelector);
@@ -206,13 +317,18 @@
             this.Controls.Add(this.lblImageDirectory);
             this.Controls.Add(this.btnGo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(500, 400);
+            this.MinimumSize = new System.Drawing.Size(600, 500);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dup Image Deleter";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.grpOptions.ResumeLayout(false);
             this.grpOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabGrid.ResumeLayout(false);
+            this.tabOutput.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,6 +351,16 @@
         private System.Windows.Forms.Button btnMoveDirectory;
         private System.Windows.Forms.CheckBox chkMoveInsteadOfDelete;
         private System.Windows.Forms.FolderBrowserDialog moveDirectoryBrowser;
+        private System.Windows.Forms.DataGridView grdOutput;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabGrid;
+        private System.Windows.Forms.TabPage tabOutput;
+        private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Action;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Folder;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OriginalImage;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DuplicateImage;
+        private System.Windows.Forms.DataGridViewButtonColumn OpenFolder;
     }
 }
 

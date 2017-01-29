@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace DupImageDeleter
 {
@@ -62,8 +63,9 @@ namespace DupImageDeleter
                 && (!this.chkMoveInsteadOfDelete.Checked || !string.IsNullOrWhiteSpace(this.txtMoveDirectory.Text))
                 && 
                 (
-                    this.chkDeleteFilesWithSameName.Checked && !string.IsNullOrWhiteSpace(this.txtExtension.Text)
-                    // add more options here
+                    (this.chkDeleteFilesWithSameName.Checked && !string.IsNullOrWhiteSpace(this.txtExtension.Text))
+                    || 
+                    (1 == 0) // add more options here
                 );
         }
 
@@ -89,6 +91,7 @@ namespace DupImageDeleter
                 var fileAttributes = (from f in files
                                       select new
                                       {
+                                          FileFolder = f.DirectoryName,
                                           FileName = f.Name,
                                           FileNameWithoutExtension = Path.GetFileNameWithoutExtension(f.Name),
                                           FileExtension = f.Extension,
@@ -102,12 +105,15 @@ namespace DupImageDeleter
                     fileAttributes
                         .GroupBy(f => f.FileNameWithoutExtension)
                         .Where(group => group.Count() > 1)
-                        .Select(group => fileAttributes.SingleOrDefault(x =>
-                                string.Equals(x.FileNameWithoutExtension, group.Key, StringComparison.OrdinalIgnoreCase)
-                                && string.Equals(x.FileExtension, $".{extension}", StringComparison.OrdinalIgnoreCase)))
+                        .SelectMany(group => fileAttributes.Where(x => this.CompareString(x.FileNameWithoutExtension, group.Key) && !this.CompareString(x.FileExtension, $".{extension}")))
+                        .Select(x => new
+                        {
+                            OriginalFile = fileAttributes.SingleOrDefault(y => this.CompareString(y.FileNameWithoutExtension, x.FileNameWithoutExtension) && this.CompareString(y.FileExtension, $".{extension}")),
+                            FileToDelete = x
+                        })
                         .ToList();
 
-                fileAttributes.RemoveAll(x => filesToDelete.Contains(x));
+                fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
                 //******************************************************************
 
                 ////******************************************************************
@@ -128,27 +134,22 @@ namespace DupImageDeleter
                 {
                     if (fileToDelete != null)
                     {
-                        var file = root.GetFiles(fileToDelete.FileName).SingleOrDefault();
+                        var file = root.GetFiles(fileToDelete.FileToDelete.FileName).SingleOrDefault();
 
                         if (file != null)
                         {
-                            if (testMode)
+                            string desc = (move ? "Move" : "Delete") + (testMode ? " (Test Mode)" : string.Empty);
+
+                            this.AddToOutput($"{desc}: {file.FullName}");
+                            this.AddToGrid(desc, fileToDelete.FileToDelete.FileFolder, fileToDelete.OriginalFile?.FileName, fileToDelete.FileToDelete.FileName);
+
+                            if (!testMode)
                             {
-                                string desc = move ? "move" : "delete";
-
-                                this.AddToOutput($"Would {desc}: {file.FullName}");
-                            }
-                            else
-                            {
-                                string desc = move ? "Moving" : "Deleting";
-
-                                this.AddToOutput($"{desc}: {file.FullName}");
-
                                 try
                                 {
                                     if(move)
                                     {
-                                        file.MoveTo(this.txtMoveDirectory.Text);
+                                        file.MoveTo(this.txtMoveDirectory.Text + @"\" + file.Name);
                                     }
                                     else
                                     {
@@ -168,12 +169,17 @@ namespace DupImageDeleter
 
                 foreach (DirectoryInfo dirInfo in subDirs)
                 {
-                    if(!string.Equals(dirInfo.Name, "Cache", StringComparison.OrdinalIgnoreCase))
+                    if(!this.CompareString(dirInfo.Name, "Cache"))
                     {
                         this.WalkDirectoryTree(dirInfo);
                     }
                 }
             }
+        }
+
+        private bool CompareString(string string1, string string2)
+        {
+            return string.Equals(string1, string2, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string GetMD5HashFromFile(string fileName)
@@ -187,7 +193,6 @@ namespace DupImageDeleter
             }
         }
 
-
         private void AddToOutput(string output)
         {
             this.txtOutput.AppendText(output + Environment.NewLine);
@@ -195,6 +200,9 @@ namespace DupImageDeleter
 
         private void btnGo_Click(object sender, EventArgs e)
         {
+            this.grdOutput.Rows.Clear();
+            this.grdOutput.Refresh();
+
             this.txtOutput.Text = string.Empty;
 
             DirectoryInfo root = new DirectoryInfo(this.txtImageDirectory.Text);
@@ -241,6 +249,34 @@ namespace DupImageDeleter
         private void txtMoveDirectory_TextChanged(object sender, EventArgs e)
         {
             this.InitControls();
+        }
+
+        private void grdOutput_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender;
+
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            {
+                string folder = senderGrid.Rows[e.RowIndex].Cells["Folder"].Value?.ToString();
+
+                if(!string.IsNullOrWhiteSpace(folder))
+                {
+                    try
+                    {
+                        Process.Start(folder);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.AddToOutput(ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void AddToGrid(string action, string folder, string originalFile, string duplicateFile)
+        {
+            this.grdOutput.Rows.Add(action, folder, originalFile, duplicateFile);
+            this.grdOutput.Refresh();
         }
     }
 }
