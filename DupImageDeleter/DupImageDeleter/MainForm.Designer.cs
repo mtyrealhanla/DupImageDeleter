@@ -44,15 +44,15 @@
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.moveDirectoryBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.grdOutput = new System.Windows.Forms.DataGridView();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabGrid = new System.Windows.Forms.TabPage();
-            this.tabOutput = new System.Windows.Forms.TabPage();
-            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.Action = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.OriginalImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DuplicateImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.OpenFolder = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabGrid = new System.Windows.Forms.TabPage();
+            this.tabOutput = new System.Windows.Forms.TabPage();
+            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -70,7 +70,7 @@
             this.btnGo.TabIndex = 6;
             this.btnGo.Text = "Go!";
             this.btnGo.UseVisualStyleBackColor = true;
-            this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
+            this.btnGo.Click += new System.EventHandler(this.BtnGoClick);
             // 
             // lblImageDirectory
             // 
@@ -90,7 +90,8 @@
             this.txtImageDirectory.ReadOnly = true;
             this.txtImageDirectory.Size = new System.Drawing.Size(524, 20);
             this.txtImageDirectory.TabIndex = 1;
-            this.txtImageDirectory.TextChanged += new System.EventHandler(this.txtImageDirectory_TextChanged);
+            this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
+            this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
             // btnDirectorySelector
             // 
@@ -101,7 +102,7 @@
             this.btnDirectorySelector.TabIndex = 2;
             this.btnDirectorySelector.Text = "...";
             this.btnDirectorySelector.UseVisualStyleBackColor = true;
-            this.btnDirectorySelector.Click += new System.EventHandler(this.btnDirectorySelector_Click);
+            this.btnDirectorySelector.Click += new System.EventHandler(this.BtnDirectorySelectorClick);
             // 
             // chkTestMode
             // 
@@ -142,7 +143,7 @@
             this.btnMoveDirectory.TabIndex = 5;
             this.btnMoveDirectory.Text = "...";
             this.btnMoveDirectory.UseVisualStyleBackColor = true;
-            this.btnMoveDirectory.Click += new System.EventHandler(this.btnMoveDirectory_Click);
+            this.btnMoveDirectory.Click += new System.EventHandler(this.BtnMoveDirectoryClick);
             // 
             // chkMoveInsteadOfDelete
             // 
@@ -153,7 +154,7 @@
             this.chkMoveInsteadOfDelete.TabIndex = 3;
             this.chkMoveInsteadOfDelete.Text = "Move duplicates instead of delete";
             this.chkMoveInsteadOfDelete.UseVisualStyleBackColor = true;
-            this.chkMoveInsteadOfDelete.CheckedChanged += new System.EventHandler(this.chkMoveInsteadOfDelete_CheckedChanged);
+            this.chkMoveInsteadOfDelete.CheckedChanged += new System.EventHandler(this.ChkMoveInsteadOfDeleteCheckedChanged);
             // 
             // txtMoveDirectory
             // 
@@ -164,7 +165,7 @@
             this.txtMoveDirectory.ReadOnly = true;
             this.txtMoveDirectory.Size = new System.Drawing.Size(324, 20);
             this.txtMoveDirectory.TabIndex = 4;
-            this.txtMoveDirectory.TextChanged += new System.EventHandler(this.txtMoveDirectory_TextChanged);
+            this.txtMoveDirectory.TextChanged += new System.EventHandler(this.TxtMoveDirectoryTextChanged);
             // 
             // lblExtension
             // 
@@ -183,7 +184,7 @@
             this.txtExtension.Name = "txtExtension";
             this.txtExtension.Size = new System.Drawing.Size(69, 20);
             this.txtExtension.TabIndex = 2;
-            this.txtExtension.TextChanged += new System.EventHandler(this.txtExtension_TextChanged);
+            this.txtExtension.TextChanged += new System.EventHandler(this.TxtExtensionTextChanged);
             // 
             // chkDeleteFilesWithSameName
             // 
@@ -194,7 +195,7 @@
             this.chkDeleteFilesWithSameName.TabIndex = 0;
             this.chkDeleteFilesWithSameName.Text = "Files with same name but different extension";
             this.chkDeleteFilesWithSameName.UseVisualStyleBackColor = true;
-            this.chkDeleteFilesWithSameName.CheckedChanged += new System.EventHandler(this.chkDeleteFilesWithSameName_CheckedChanged);
+            this.chkDeleteFilesWithSameName.CheckedChanged += new System.EventHandler(this.ChkDeleteFilesWithSameNameCheckedChanged);
             // 
             // txtOutput
             // 
@@ -202,7 +203,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(446, 144);
+            this.txtOutput.Size = new System.Drawing.Size(546, 244);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -225,47 +226,7 @@
             this.grdOutput.ReadOnly = true;
             this.grdOutput.Size = new System.Drawing.Size(546, 244);
             this.grdOutput.TabIndex = 7;
-            this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdOutput_CellContentClick);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabGrid);
-            this.tabControl1.Controls.Add(this.tabOutput);
-            this.tabControl1.Location = new System.Drawing.Point(12, 144);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(560, 276);
-            this.tabControl1.TabIndex = 9;
-            // 
-            // tabGrid
-            // 
-            this.tabGrid.Controls.Add(this.grdOutput);
-            this.tabGrid.Location = new System.Drawing.Point(4, 22);
-            this.tabGrid.Name = "tabGrid";
-            this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGrid.Size = new System.Drawing.Size(552, 250);
-            this.tabGrid.TabIndex = 0;
-            this.tabGrid.Text = "Grid";
-            this.tabGrid.UseVisualStyleBackColor = true;
-            // 
-            // tabOutput
-            // 
-            this.tabOutput.Controls.Add(this.txtOutput);
-            this.tabOutput.Location = new System.Drawing.Point(4, 22);
-            this.tabOutput.Name = "tabOutput";
-            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(452, 150);
-            this.tabOutput.TabIndex = 1;
-            this.tabOutput.Text = "Output";
-            this.tabOutput.UseVisualStyleBackColor = true;
-            // 
-            // fileSystemWatcher1
-            // 
-            this.fileSystemWatcher1.EnableRaisingEvents = true;
-            this.fileSystemWatcher1.SynchronizingObject = this;
+            this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GrdOutputCellContentClick);
             // 
             // Action
             // 
@@ -304,6 +265,46 @@
             this.OpenFolder.UseColumnTextForButtonValue = true;
             this.OpenFolder.Width = 71;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabGrid);
+            this.tabControl1.Controls.Add(this.tabOutput);
+            this.tabControl1.Location = new System.Drawing.Point(12, 144);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(560, 276);
+            this.tabControl1.TabIndex = 9;
+            // 
+            // tabGrid
+            // 
+            this.tabGrid.Controls.Add(this.grdOutput);
+            this.tabGrid.Location = new System.Drawing.Point(4, 22);
+            this.tabGrid.Name = "tabGrid";
+            this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGrid.Size = new System.Drawing.Size(552, 250);
+            this.tabGrid.TabIndex = 0;
+            this.tabGrid.Text = "Grid";
+            this.tabGrid.UseVisualStyleBackColor = true;
+            // 
+            // tabOutput
+            // 
+            this.tabOutput.Controls.Add(this.txtOutput);
+            this.tabOutput.Location = new System.Drawing.Point(4, 22);
+            this.tabOutput.Name = "tabOutput";
+            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOutput.Size = new System.Drawing.Size(552, 250);
+            this.tabOutput.TabIndex = 1;
+            this.tabOutput.Text = "Output";
+            this.tabOutput.UseVisualStyleBackColor = true;
+            // 
+            // fileSystemWatcher1
+            // 
+            this.fileSystemWatcher1.EnableRaisingEvents = true;
+            this.fileSystemWatcher1.SynchronizingObject = this;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -321,7 +322,8 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dup Image Deleter";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
+            this.Load += new System.EventHandler(this.MainFormLoad);
             this.grpOptions.ResumeLayout(false);
             this.grpOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).EndInit();

@@ -6,7 +6,6 @@
 //   The main form.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace DupImageDeleter
 {
     using System;
@@ -16,13 +15,20 @@ namespace DupImageDeleter
     using System.Security.Cryptography;
     using System.Windows.Forms;
 
+    using DupImageDeleter.Properties;
+
     /// <summary>
-    /// The main form.
+    ///     The main form.
     /// </summary>
     public partial class MainForm : Form
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        ///     The fire init controls.
+        /// </summary>
+        private bool fireInitControls = true;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MainForm" /> class.
         /// </summary>
         public MainForm()
         {
@@ -38,8 +44,15 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void btnDirectorySelector_Click(object sender, EventArgs e)
+        private void BtnDirectorySelectorClick(object sender, EventArgs e)
         {
+            string selectedPath = this.txtImageDirectory.Text;
+
+            if (!string.IsNullOrWhiteSpace(selectedPath))
+            {
+                this.folderBrowser.SelectedPath = selectedPath;
+            }
+
             DialogResult result = this.folderBrowser.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -57,7 +70,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void chkDeleteFilesWithSameName_CheckedChanged(object sender, EventArgs e)
+        private void ChkDeleteFilesWithSameNameCheckedChanged(object sender, EventArgs e)
         {
             this.InitControls();
         }
@@ -71,16 +84,31 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void MainForm_Load(object sender, EventArgs e)
+        private void MainFormLoad(object sender, EventArgs e)
         {
+            this.fireInitControls = false;
+
+            this.txtImageDirectory.Text = Settings.Default.ImageDirectory;
+            this.chkDeleteFilesWithSameName.Checked = Settings.Default.OptFilesWithSameName;
+            this.txtExtension.Text = Settings.Default.OptExtensionToKeep;
+            this.chkMoveInsteadOfDelete.Checked = Settings.Default.OptMoveDuplicates;
+            this.txtMoveDirectory.Text = Settings.Default.MoveDirectory;
+
+            this.fireInitControls = true;
+
             this.InitControls();
         }
 
         /// <summary>
-        /// The init controls.
+        ///     The init controls.
         /// </summary>
         private void InitControls()
         {
+            if (!this.fireInitControls)
+            {
+                return;
+            }
+
             this.txtExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
             this.lblExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
 
@@ -143,7 +171,7 @@ namespace DupImageDeleter
                                               FileName = f.Name,
                                               FileNameWithoutExtension = Path.GetFileNameWithoutExtension(f.Name),
                                               FileExtension = f.Extension,
-                                              FileHash = GetMD5HashFromFile(f.FullName),
+                                              FileHash = GetHashFromFile(f.FullName),
                                               FileCreationTime = f.CreationTimeUtc
                                           }).ToList();
 
@@ -190,40 +218,46 @@ namespace DupImageDeleter
             ////******************************************************************
             foreach (var fileToDelete in filesToDelete)
             {
-                if (fileToDelete != null)
+                if (fileToDelete == null)
                 {
-                    FileInfo file = root.GetFiles(fileToDelete.FileToDelete.FileName).SingleOrDefault();
+                    continue;
+                }
 
-                    if (file != null)
+                FileInfo file = root.GetFiles(fileToDelete.FileToDelete.FileName).SingleOrDefault();
+
+                if (file == null)
+                {
+                    continue;
+                }
+
+                string desc = (move ? "Move" : "Delete") + (testMode ? " (Test Mode)" : string.Empty);
+
+                this.AddToOutput($"{desc}: {file.FullName}");
+                this.AddToGrid(
+                    desc,
+                    fileToDelete.FileToDelete.FileFolder,
+                    fileToDelete.OriginalFile?.FileName,
+                    fileToDelete.FileToDelete.FileName);
+
+                if (testMode)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    if (move)
                     {
-                        string desc = (move ? "Move" : "Delete") + (testMode ? " (Test Mode)" : string.Empty);
-
-                        this.AddToOutput($"{desc}: {file.FullName}");
-                        this.AddToGrid(
-                            desc,
-                            fileToDelete.FileToDelete.FileFolder,
-                            fileToDelete.OriginalFile?.FileName,
-                            fileToDelete.FileToDelete.FileName);
-
-                        if (!testMode)
-                        {
-                            try
-                            {
-                                if (move)
-                                {
-                                    file.MoveTo(this.txtMoveDirectory.Text + @"\" + file.Name);
-                                }
-                                else
-                                {
-                                    file.Delete();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                this.AddToOutput(e.Message);
-                            }
-                        }
+                        file.MoveTo(this.txtMoveDirectory.Text + @"\" + file.Name);
                     }
+                    else
+                    {
+                        file.Delete();
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.AddToOutput(e.Message);
                 }
             }
 
@@ -256,7 +290,7 @@ namespace DupImageDeleter
         }
 
         /// <summary>
-        /// The get m d 5 hash from file.
+        /// The get hash from file.
         /// </summary>
         /// <param name="fileName">
         /// The file name.
@@ -264,7 +298,7 @@ namespace DupImageDeleter
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private static string GetMD5HashFromFile(string fileName)
+        private static string GetHashFromFile(string fileName)
         {
             using (MD5 md5 = MD5.Create())
             {
@@ -295,7 +329,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void btnGo_Click(object sender, EventArgs e)
+        private void BtnGoClick(object sender, EventArgs e)
         {
             this.grdOutput.Rows.Clear();
             this.grdOutput.Refresh();
@@ -327,7 +361,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void chkMoveInsteadOfDelete_CheckedChanged(object sender, EventArgs e)
+        private void ChkMoveInsteadOfDeleteCheckedChanged(object sender, EventArgs e)
         {
             this.InitControls();
         }
@@ -341,8 +375,15 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void btnMoveDirectory_Click(object sender, EventArgs e)
+        private void BtnMoveDirectoryClick(object sender, EventArgs e)
         {
+            string selectedPath = this.txtMoveDirectory.Text;
+
+            if (!string.IsNullOrWhiteSpace(selectedPath))
+            {
+                this.moveDirectoryBrowser.SelectedPath = selectedPath;
+            }
+
             DialogResult result = this.moveDirectoryBrowser.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -360,7 +401,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void txtImageDirectory_TextChanged(object sender, EventArgs e)
+        private void TxtImageDirectoryTextChanged(object sender, EventArgs e)
         {
             this.InitControls();
         }
@@ -374,7 +415,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void txtExtension_TextChanged(object sender, EventArgs e)
+        private void TxtExtensionTextChanged(object sender, EventArgs e)
         {
             this.InitControls();
         }
@@ -388,13 +429,13 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void txtMoveDirectory_TextChanged(object sender, EventArgs e)
+        private void TxtMoveDirectoryTextChanged(object sender, EventArgs e)
         {
             this.InitControls();
         }
 
         /// <summary>
-        /// The grd output_ cell content click.
+        /// The Grd output_ cell content click.
         /// </summary>
         /// <param name="sender">
         /// The sender.
@@ -402,7 +443,7 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void grdOutput_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void GrdOutputCellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridView senderGrid = (DataGridView)sender;
 
@@ -447,6 +488,26 @@ namespace DupImageDeleter
         {
             this.grdOutput.Rows.Add(action, folder, originalFile, duplicateFile);
             this.grdOutput.Refresh();
+        }
+
+        /// <summary>
+        /// The main form form closing.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void MainFormFormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.Default.ImageDirectory = this.txtImageDirectory.Text;
+            Settings.Default.OptFilesWithSameName = this.chkDeleteFilesWithSameName.Checked;
+            Settings.Default.OptExtensionToKeep = this.txtExtension.Text;
+            Settings.Default.OptMoveDuplicates = this.chkMoveInsteadOfDelete.Checked;
+            Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
+
+            Settings.Default.Save();
         }
     }
 }
