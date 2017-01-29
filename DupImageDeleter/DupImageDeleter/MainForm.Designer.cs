@@ -35,10 +35,14 @@
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.btnMoveDirectory = new System.Windows.Forms.Button();
+            this.chkMoveInsteadOfDelete = new System.Windows.Forms.CheckBox();
+            this.txtMoveDirectory = new System.Windows.Forms.TextBox();
             this.lblExtension = new System.Windows.Forms.Label();
             this.txtExtension = new System.Windows.Forms.TextBox();
             this.chkDeleteFilesWithSameName = new System.Windows.Forms.CheckBox();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.moveDirectoryBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.grpOptions.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +75,7 @@
             this.txtImageDirectory.ReadOnly = true;
             this.txtImageDirectory.Size = new System.Drawing.Size(424, 20);
             this.txtImageDirectory.TabIndex = 1;
-            this.txtImageDirectory.Leave += new System.EventHandler(this.txtImageDirectory_Leave);
+            this.txtImageDirectory.TextChanged += new System.EventHandler(this.txtImageDirectory_TextChanged);
             // 
             // btnDirectorySelector
             // 
@@ -101,15 +105,51 @@
             // 
             this.grpOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOptions.Controls.Add(this.btnMoveDirectory);
+            this.grpOptions.Controls.Add(this.chkMoveInsteadOfDelete);
+            this.grpOptions.Controls.Add(this.txtMoveDirectory);
             this.grpOptions.Controls.Add(this.lblExtension);
             this.grpOptions.Controls.Add(this.txtExtension);
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(12, 59);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(460, 53);
+            this.grpOptions.Size = new System.Drawing.Size(460, 79);
             this.grpOptions.TabIndex = 3;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
+            // 
+            // btnMoveDirectory
+            // 
+            this.btnMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMoveDirectory.Location = new System.Drawing.Point(427, 44);
+            this.btnMoveDirectory.Name = "btnMoveDirectory";
+            this.btnMoveDirectory.Size = new System.Drawing.Size(27, 23);
+            this.btnMoveDirectory.TabIndex = 5;
+            this.btnMoveDirectory.Text = "...";
+            this.btnMoveDirectory.UseVisualStyleBackColor = true;
+            this.btnMoveDirectory.Click += new System.EventHandler(this.btnMoveDirectory_Click);
+            // 
+            // chkMoveInsteadOfDelete
+            // 
+            this.chkMoveInsteadOfDelete.AutoSize = true;
+            this.chkMoveInsteadOfDelete.Location = new System.Drawing.Point(6, 48);
+            this.chkMoveInsteadOfDelete.Name = "chkMoveInsteadOfDelete";
+            this.chkMoveInsteadOfDelete.Size = new System.Drawing.Size(185, 17);
+            this.chkMoveInsteadOfDelete.TabIndex = 3;
+            this.chkMoveInsteadOfDelete.Text = "Move duplicates instead of delete";
+            this.chkMoveInsteadOfDelete.UseVisualStyleBackColor = true;
+            this.chkMoveInsteadOfDelete.CheckedChanged += new System.EventHandler(this.chkMoveInsteadOfDelete_CheckedChanged);
+            // 
+            // txtMoveDirectory
+            // 
+            this.txtMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMoveDirectory.Location = new System.Drawing.Point(197, 46);
+            this.txtMoveDirectory.Name = "txtMoveDirectory";
+            this.txtMoveDirectory.ReadOnly = true;
+            this.txtMoveDirectory.Size = new System.Drawing.Size(224, 20);
+            this.txtMoveDirectory.TabIndex = 4;
+            this.txtMoveDirectory.TextChanged += new System.EventHandler(this.txtMoveDirectory_TextChanged);
             // 
             // lblExtension
             // 
@@ -128,12 +168,12 @@
             this.txtExtension.Name = "txtExtension";
             this.txtExtension.Size = new System.Drawing.Size(69, 20);
             this.txtExtension.TabIndex = 2;
-            this.txtExtension.Leave += new System.EventHandler(this.txtExtension_Leave);
+            this.txtExtension.TextChanged += new System.EventHandler(this.txtExtension_TextChanged);
             // 
             // chkDeleteFilesWithSameName
             // 
             this.chkDeleteFilesWithSameName.AutoSize = true;
-            this.chkDeleteFilesWithSameName.Location = new System.Drawing.Point(7, 20);
+            this.chkDeleteFilesWithSameName.Location = new System.Drawing.Point(6, 20);
             this.chkDeleteFilesWithSameName.Name = "chkDeleteFilesWithSameName";
             this.chkDeleteFilesWithSameName.Size = new System.Drawing.Size(233, 17);
             this.chkDeleteFilesWithSameName.TabIndex = 0;
@@ -146,10 +186,10 @@
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutput.Location = new System.Drawing.Point(12, 118);
+            this.txtOutput.Location = new System.Drawing.Point(12, 144);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(460, 202);
+            this.txtOutput.Size = new System.Drawing.Size(460, 176);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -191,6 +231,10 @@
         private System.Windows.Forms.CheckBox chkDeleteFilesWithSameName;
         private System.Windows.Forms.RichTextBox txtOutput;
         private System.Windows.Forms.Label lblExtension;
+        private System.Windows.Forms.TextBox txtMoveDirectory;
+        private System.Windows.Forms.Button btnMoveDirectory;
+        private System.Windows.Forms.CheckBox chkMoveInsteadOfDelete;
+        private System.Windows.Forms.FolderBrowserDialog moveDirectoryBrowser;
     }
 }
 
