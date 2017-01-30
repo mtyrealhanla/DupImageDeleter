@@ -9,6 +9,7 @@
 namespace DupImageDeleter
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -93,6 +94,8 @@ namespace DupImageDeleter
             this.txtExtension.Text = Settings.Default.OptExtensionToKeep;
             this.chkMoveInsteadOfDelete.Checked = Settings.Default.OptMoveDuplicates;
             this.txtMoveDirectory.Text = Settings.Default.MoveDirectory;
+            this.chkHashCheck.Checked = Settings.Default.OptHashCheck;
+            this.chkRequireLikeFileNames.Checked = Settings.Default.OptRequireLikeFileNames;
 
             this.fireInitControls = true;
 
@@ -125,14 +128,18 @@ namespace DupImageDeleter
                 this.txtMoveDirectory.Text = null;
             }
 
+            this.chkRequireLikeFileNames.Enabled = this.chkHashCheck.Checked;
+
+            if (!this.chkRequireLikeFileNames.Enabled)
+            {
+                this.chkRequireLikeFileNames.Checked = false;
+            }
+
             this.btnGo.Enabled = !string.IsNullOrWhiteSpace(this.txtImageDirectory.Text)
                                  && (!this.chkMoveInsteadOfDelete.Checked
                                      || !string.IsNullOrWhiteSpace(this.txtMoveDirectory.Text))
-                                 && ((this.chkDeleteFilesWithSameName.Checked
-                                      && !string.IsNullOrWhiteSpace(this.txtExtension.Text)) || (1 == 0)
-
-                                    // add more options here
-                                    );
+                                 && (!this.chkDeleteFilesWithSameName.Checked
+                                     || !string.IsNullOrWhiteSpace(this.txtExtension.Text));
         }
 
         /// <summary>
@@ -163,60 +170,33 @@ namespace DupImageDeleter
                 return;
             }
 
-            var fileAttributes = (from f in files
-                                  select
-                                      new
-                                          {
-                                              FileFolder = f.DirectoryName,
-                                              FileName = f.Name,
-                                              FileNameWithoutExtension = Path.GetFileNameWithoutExtension(f.Name),
-                                              FileExtension = f.Extension,
-                                              FileHash = GetHashFromFile(f.FullName),
-                                              FileCreationTime = f.CreationTimeUtc
-                                          }).ToList();
+            List<FileAttribute> fileAttributes = (from f in files
+                                                  select
+                                                      new FileAttribute
+                                                          {
+                                                              FileFolder = f.DirectoryName,
+                                                              FileName = f.Name,
+                                                              FileNameWithoutExtension =
+                                                                  Path.GetFileNameWithoutExtension(f.Name),
+                                                              FileExtension = f.Extension,
+                                                              FileHash = GetHashFromFile(f.FullName),
+                                                              FileCreationTime = f.CreationTimeUtc
+                                                          }).ToList
+                ();
 
-            // delete files where the file name matches but the extension doesnt
-            // ******************************************************************
-            var filesToDelete =
-                fileAttributes.GroupBy(f => f.FileNameWithoutExtension)
-                    .Where(group => @group.Count() > 1)
-                    .SelectMany(
-                        group =>
-                        fileAttributes.Where(
-                            x =>
-                            this.CompareString(x.FileNameWithoutExtension, @group.Key)
-                            && !this.CompareString(x.FileExtension, $".{extension}")))
-                    .Select(
-                        x =>
-                        new
-                            {
-                                OriginalFile =
-                            fileAttributes.SingleOrDefault(
-                                y =>
-                                this.CompareString(y.FileNameWithoutExtension, x.FileNameWithoutExtension)
-                                && this.CompareString(y.FileExtension, $".{extension}")),
-                                FileToDelete = x
-                            })
-                    .ToList();
+            List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
 
-            fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
+            if (this.chkDeleteFilesWithSameName.Checked)
+            {
+                this.DeleteFilesWithSameName(extension, fileAttributes, filesToDelete);
+            }
 
-            // ******************************************************************
+            if (this.chkHashCheck.Checked)
+            {
+                this.DeleteFilesWithHashCheck(fileAttributes, filesToDelete);
+            }
 
-            ////******************************************************************
-            // filesToDelete.AddRange(
-            // fileAttributes
-            // .GroupBy(f => f.FileHash)
-            // .Where(group => group.Count() > 1)
-            // .Select(group =>
-            // fileAttributes
-            // .Where(x => string.Equals(x.FileHash, group.Key, StringComparison.OrdinalIgnoreCase))
-            // .OrderByDescending(x => x.FileCreationTime)
-            // .ThenByDescending(x => x.FileName).Take(1).SingleOrDefault()).ToList());
-
-            // fileAttributes.RemoveAll(x => filesToDelete.Contains(x));
-            ////******************************************************************
-            foreach (var fileToDelete in filesToDelete)
+            foreach (FileAttributeOutput fileToDelete in filesToDelete)
             {
                 if (fileToDelete == null)
                 {
@@ -270,6 +250,86 @@ namespace DupImageDeleter
                     this.WalkDirectoryTree(dirInfo);
                 }
             }
+        }
+
+        /// <summary>
+        /// The delete files with hash check.
+        /// </summary>
+        /// <param name="fileAttributes">
+        /// The file attributes.
+        /// </param>
+        /// <param name="filesToDelete">
+        /// The files to delete.
+        /// </param>
+        private void DeleteFilesWithHashCheck(
+            List<FileAttribute> fileAttributes,
+            List<FileAttributeOutput> filesToDelete)
+        {
+            filesToDelete.AddRange(
+                fileAttributes.GroupBy(f => new { f.FileHash })
+                    .Where(group => group.Count() > 1)
+                    .Select(
+                        group =>
+                        fileAttributes.Where(x => this.CompareString(x.FileHash, group.Key.FileHash))
+                            .OrderBy(x => x.FileCreationTime)
+                            .ThenBy(x => x.FileName)
+                            .Take(1)
+                            .SingleOrDefault())
+                    .SelectMany(
+                        original =>
+                        fileAttributes.Where(
+                            x =>
+                            this.CompareString(x.FileHash, original.FileHash) && !this.CompareString(x.FileName, original.FileName))
+                            .Select(y => new FileAttributeOutput { OriginalFile = original, FileToDelete = y }))
+                    .Where(x => x.OriginalFile != null && x.FileToDelete != null)
+                    .ToList());
+
+            fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
+        }
+
+        /// <summary>
+        /// The delete files with same name.
+        /// </summary>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
+        /// <param name="fileAttributes">
+        /// The file attributes.
+        /// </param>
+        /// <param name="filesToDelete">
+        /// The files to delete.
+        /// </param>
+        private void DeleteFilesWithSameName(
+            string extension,
+            List<FileAttribute> fileAttributes,
+            List<FileAttributeOutput> filesToDelete)
+        {
+            filesToDelete.AddRange(
+                fileAttributes.GroupBy(f => f.FileNameWithoutExtension)
+                    .Where(group => @group.Count() > 1)
+                    .SelectMany(
+                        group =>
+                        fileAttributes.Where(
+                            x =>
+                            this.CompareString(x.FileNameWithoutExtension, @group.Key)
+                            && !this.CompareString(x.FileExtension, $".{extension}")))
+                    .Select(
+                        x =>
+                        new FileAttributeOutput
+                            {
+                                OriginalFile =
+                                    fileAttributes.SingleOrDefault(
+                                        y =>
+                                        this.CompareString(
+                                            y.FileNameWithoutExtension,
+                                            x.FileNameWithoutExtension)
+                                        && this.CompareString(y.FileExtension, $".{extension}")),
+                                FileToDelete = x
+                            })
+                    .Where(x => x.OriginalFile != null && x.FileToDelete != null)
+                    .ToList());
+
+            fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
         }
 
         /// <summary>
@@ -506,8 +566,76 @@ namespace DupImageDeleter
             Settings.Default.OptExtensionToKeep = this.txtExtension.Text;
             Settings.Default.OptMoveDuplicates = this.chkMoveInsteadOfDelete.Checked;
             Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
+            Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
+            Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
 
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// The chk hash check checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void ChkHashCheckCheckedChanged(object sender, EventArgs e)
+        {
+            this.InitControls();
+        }
+
+        /// <summary>
+        ///     The file attribute.
+        /// </summary>
+        private sealed class FileAttribute
+        {
+            /// <summary>
+            ///     Gets or sets the file folder.
+            /// </summary>
+            public string FileFolder { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file name.
+            /// </summary>
+            public string FileName { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file name without extension.
+            /// </summary>
+            public string FileNameWithoutExtension { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file extension.
+            /// </summary>
+            public string FileExtension { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file hash.
+            /// </summary>
+            public string FileHash { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file creation time.
+            /// </summary>
+            public DateTime FileCreationTime { get; set; }
+        }
+
+        /// <summary>
+        ///     The file attribute output.
+        /// </summary>
+        private sealed class FileAttributeOutput
+        {
+            /// <summary>
+            ///     Gets or sets the original file.
+            /// </summary>
+            public FileAttribute OriginalFile { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the file to delete.
+            /// </summary>
+            public FileAttribute FileToDelete { get; set; }
         }
     }
 }

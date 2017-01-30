@@ -82,5 +82,29 @@ namespace DupImageDeleter.Properties {
                 this["MoveDirectory"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OptHashCheck {
+            get {
+                return ((bool)(this["OptHashCheck"]));
+            }
+            set {
+                this["OptHashCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OptRequireLikeFileNames {
+            get {
+                return ((bool)(this["OptRequireLikeFileNames"]));
+            }
+            set {
+                this["OptRequireLikeFileNames"] = value;
+            }
+        }
     }
 }

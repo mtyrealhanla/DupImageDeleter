@@ -31,10 +31,10 @@
             this.btnGo = new System.Windows.Forms.Button();
             this.lblImageDirectory = new System.Windows.Forms.Label();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
-            this.txtImageDirectory = new System.Windows.Forms.TextBox();
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkHashCheck = new System.Windows.Forms.CheckBox();
             this.btnMoveDirectory = new System.Windows.Forms.Button();
             this.chkMoveInsteadOfDelete = new System.Windows.Forms.CheckBox();
             this.txtMoveDirectory = new System.Windows.Forms.TextBox();
@@ -53,6 +53,8 @@
             this.tabGrid = new System.Windows.Forms.TabPage();
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.txtImageDirectory = new System.Windows.Forms.TextBox();
+            this.chkRequireLikeFileNames = new System.Windows.Forms.CheckBox();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -64,7 +66,7 @@
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(497, 426);
+            this.btnGo.Location = new System.Drawing.Point(497, 497);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(75, 23);
             this.btnGo.TabIndex = 6;
@@ -80,18 +82,6 @@
             this.lblImageDirectory.Size = new System.Drawing.Size(81, 13);
             this.lblImageDirectory.TabIndex = 0;
             this.lblImageDirectory.Text = "Image Directory";
-            // 
-            // txtImageDirectory
-            // 
-            this.txtImageDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtImageDirectory.Location = new System.Drawing.Point(15, 32);
-            this.txtImageDirectory.Name = "txtImageDirectory";
-            this.txtImageDirectory.ReadOnly = true;
-            this.txtImageDirectory.Size = new System.Drawing.Size(524, 20);
-            this.txtImageDirectory.TabIndex = 1;
-            this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
-            this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
             // btnDirectorySelector
             // 
@@ -110,7 +100,7 @@
             this.chkTestMode.AutoSize = true;
             this.chkTestMode.Checked = true;
             this.chkTestMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestMode.Location = new System.Drawing.Point(414, 430);
+            this.chkTestMode.Location = new System.Drawing.Point(414, 501);
             this.chkTestMode.Name = "chkTestMode";
             this.chkTestMode.Size = new System.Drawing.Size(77, 17);
             this.chkTestMode.TabIndex = 5;
@@ -121,6 +111,8 @@
             // 
             this.grpOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOptions.Controls.Add(this.chkRequireLikeFileNames);
+            this.grpOptions.Controls.Add(this.chkHashCheck);
             this.grpOptions.Controls.Add(this.btnMoveDirectory);
             this.grpOptions.Controls.Add(this.chkMoveInsteadOfDelete);
             this.grpOptions.Controls.Add(this.txtMoveDirectory);
@@ -129,15 +121,26 @@
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(12, 59);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(560, 79);
+            this.grpOptions.Size = new System.Drawing.Size(560, 99);
             this.grpOptions.TabIndex = 3;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
             // 
+            // chkHashCheck
+            // 
+            this.chkHashCheck.AutoSize = true;
+            this.chkHashCheck.Location = new System.Drawing.Point(6, 46);
+            this.chkHashCheck.Name = "chkHashCheck";
+            this.chkHashCheck.Size = new System.Drawing.Size(151, 17);
+            this.chkHashCheck.TabIndex = 6;
+            this.chkHashCheck.Text = "Files with same MD5 Hash";
+            this.chkHashCheck.UseVisualStyleBackColor = true;
+            this.chkHashCheck.CheckedChanged += new System.EventHandler(this.ChkHashCheckCheckedChanged);
+            // 
             // btnMoveDirectory
             // 
             this.btnMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveDirectory.Location = new System.Drawing.Point(527, 44);
+            this.btnMoveDirectory.Location = new System.Drawing.Point(527, 68);
             this.btnMoveDirectory.Name = "btnMoveDirectory";
             this.btnMoveDirectory.Size = new System.Drawing.Size(27, 23);
             this.btnMoveDirectory.TabIndex = 5;
@@ -148,7 +151,7 @@
             // chkMoveInsteadOfDelete
             // 
             this.chkMoveInsteadOfDelete.AutoSize = true;
-            this.chkMoveInsteadOfDelete.Location = new System.Drawing.Point(6, 48);
+            this.chkMoveInsteadOfDelete.Location = new System.Drawing.Point(6, 72);
             this.chkMoveInsteadOfDelete.Name = "chkMoveInsteadOfDelete";
             this.chkMoveInsteadOfDelete.Size = new System.Drawing.Size(185, 17);
             this.chkMoveInsteadOfDelete.TabIndex = 3;
@@ -160,7 +163,7 @@
             // 
             this.txtMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMoveDirectory.Location = new System.Drawing.Point(197, 46);
+            this.txtMoveDirectory.Location = new System.Drawing.Point(197, 70);
             this.txtMoveDirectory.Name = "txtMoveDirectory";
             this.txtMoveDirectory.ReadOnly = true;
             this.txtMoveDirectory.Size = new System.Drawing.Size(324, 20);
@@ -203,7 +206,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(546, 244);
+            this.txtOutput.Size = new System.Drawing.Size(546, 295);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -224,7 +227,7 @@
             this.grdOutput.Location = new System.Drawing.Point(3, 3);
             this.grdOutput.Name = "grdOutput";
             this.grdOutput.ReadOnly = true;
-            this.grdOutput.Size = new System.Drawing.Size(546, 244);
+            this.grdOutput.Size = new System.Drawing.Size(546, 295);
             this.grdOutput.TabIndex = 7;
             this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GrdOutputCellContentClick);
             // 
@@ -272,10 +275,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabGrid);
             this.tabControl1.Controls.Add(this.tabOutput);
-            this.tabControl1.Location = new System.Drawing.Point(12, 144);
+            this.tabControl1.Location = new System.Drawing.Point(12, 164);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(560, 276);
+            this.tabControl1.Size = new System.Drawing.Size(560, 327);
             this.tabControl1.TabIndex = 9;
             // 
             // tabGrid
@@ -284,7 +287,7 @@
             this.tabGrid.Location = new System.Drawing.Point(4, 22);
             this.tabGrid.Name = "tabGrid";
             this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGrid.Size = new System.Drawing.Size(552, 250);
+            this.tabGrid.Size = new System.Drawing.Size(552, 301);
             this.tabGrid.TabIndex = 0;
             this.tabGrid.Text = "Grid";
             this.tabGrid.UseVisualStyleBackColor = true;
@@ -295,7 +298,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(552, 250);
+            this.tabOutput.Size = new System.Drawing.Size(552, 301);
             this.tabOutput.TabIndex = 1;
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
@@ -305,11 +308,34 @@
             this.fileSystemWatcher1.EnableRaisingEvents = true;
             this.fileSystemWatcher1.SynchronizingObject = this;
             // 
+            // txtImageDirectory
+            // 
+            this.txtImageDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtImageDirectory.Location = new System.Drawing.Point(15, 32);
+            this.txtImageDirectory.Name = "txtImageDirectory";
+            this.txtImageDirectory.ReadOnly = true;
+            this.txtImageDirectory.Size = new System.Drawing.Size(524, 20);
+            this.txtImageDirectory.TabIndex = 1;
+            this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
+            this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
+            // 
+            // chkRequireLikeFileNames
+            // 
+            this.chkRequireLikeFileNames.AutoSize = true;
+            this.chkRequireLikeFileNames.Location = new System.Drawing.Point(197, 46);
+            this.chkRequireLikeFileNames.Name = "chkRequireLikeFileNames";
+            this.chkRequireLikeFileNames.Size = new System.Drawing.Size(259, 17);
+            this.chkRequireLikeFileNames.TabIndex = 7;
+            this.chkRequireLikeFileNames.Text = "Require Like File Names (i.e. Game-01, Game-02)";
+            this.chkRequireLikeFileNames.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
+            this.AcceptButton = this.btnGo;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 461);
+            this.ClientSize = new System.Drawing.Size(584, 532);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.grpOptions);
             this.Controls.Add(this.chkTestMode);
@@ -363,6 +389,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn OriginalImage;
         private System.Windows.Forms.DataGridViewTextBoxColumn DuplicateImage;
         private System.Windows.Forms.DataGridViewButtonColumn OpenFolder;
+        private System.Windows.Forms.CheckBox chkHashCheck;
+        private System.Windows.Forms.CheckBox chkRequireLikeFileNames;
     }
 }
 
