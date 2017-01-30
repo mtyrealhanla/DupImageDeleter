@@ -172,10 +172,10 @@ namespace DupImageDeleter
 
             if (index >= 0)
             {
-                return fileName.Substring(0, index);
+                return fileName.Substring(0, index).Trim();
             }
 
-            return fileName;
+            return fileName.Trim();
         }
 
         /// <summary>
