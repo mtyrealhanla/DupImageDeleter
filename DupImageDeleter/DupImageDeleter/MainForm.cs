@@ -130,11 +130,6 @@ namespace DupImageDeleter
 
             this.chkRequireLikeFileNames.Enabled = this.chkHashCheck.Checked;
 
-            if (!this.chkRequireLikeFileNames.Enabled)
-            {
-                this.chkRequireLikeFileNames.Checked = false;
-            }
-
             this.btnGo.Enabled = !string.IsNullOrWhiteSpace(this.txtImageDirectory.Text)
                                  && (!this.chkMoveInsteadOfDelete.Checked
                                      || !string.IsNullOrWhiteSpace(this.txtMoveDirectory.Text))
@@ -602,6 +597,8 @@ namespace DupImageDeleter
         private void ChkHashCheckCheckedChanged(object sender, EventArgs e)
         {
             this.InitControls();
+
+            this.chkRequireLikeFileNames.Checked = this.chkHashCheck.Checked;
         }
 
         /// <summary>
