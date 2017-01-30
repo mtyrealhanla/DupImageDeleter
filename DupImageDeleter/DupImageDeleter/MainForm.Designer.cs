@@ -67,7 +67,7 @@
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(497, 497);
+            this.btnGo.Location = new System.Drawing.Point(697, 526);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(75, 23);
             this.btnGo.TabIndex = 6;
@@ -87,7 +87,7 @@
             // btnDirectorySelector
             // 
             this.btnDirectorySelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDirectorySelector.Location = new System.Drawing.Point(545, 30);
+            this.btnDirectorySelector.Location = new System.Drawing.Point(745, 30);
             this.btnDirectorySelector.Name = "btnDirectorySelector";
             this.btnDirectorySelector.Size = new System.Drawing.Size(27, 23);
             this.btnDirectorySelector.TabIndex = 2;
@@ -101,7 +101,7 @@
             this.chkTestMode.AutoSize = true;
             this.chkTestMode.Checked = true;
             this.chkTestMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestMode.Location = new System.Drawing.Point(414, 501);
+            this.chkTestMode.Location = new System.Drawing.Point(614, 530);
             this.chkTestMode.Name = "chkTestMode";
             this.chkTestMode.Size = new System.Drawing.Size(77, 17);
             this.chkTestMode.TabIndex = 5;
@@ -122,7 +122,7 @@
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(12, 59);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(560, 99);
+            this.grpOptions.Size = new System.Drawing.Size(760, 99);
             this.grpOptions.TabIndex = 3;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
@@ -151,7 +151,7 @@
             // btnMoveDirectory
             // 
             this.btnMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveDirectory.Location = new System.Drawing.Point(527, 68);
+            this.btnMoveDirectory.Location = new System.Drawing.Point(727, 68);
             this.btnMoveDirectory.Name = "btnMoveDirectory";
             this.btnMoveDirectory.Size = new System.Drawing.Size(27, 23);
             this.btnMoveDirectory.TabIndex = 5;
@@ -177,7 +177,7 @@
             this.txtMoveDirectory.Location = new System.Drawing.Point(197, 70);
             this.txtMoveDirectory.Name = "txtMoveDirectory";
             this.txtMoveDirectory.ReadOnly = true;
-            this.txtMoveDirectory.Size = new System.Drawing.Size(324, 20);
+            this.txtMoveDirectory.Size = new System.Drawing.Size(524, 20);
             this.txtMoveDirectory.TabIndex = 4;
             this.txtMoveDirectory.TextChanged += new System.EventHandler(this.TxtMoveDirectoryTextChanged);
             // 
@@ -185,7 +185,7 @@
             // 
             this.lblExtension.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblExtension.AutoSize = true;
-            this.lblExtension.Location = new System.Drawing.Point(380, 21);
+            this.lblExtension.Location = new System.Drawing.Point(580, 21);
             this.lblExtension.Name = "lblExtension";
             this.lblExtension.Size = new System.Drawing.Size(93, 13);
             this.lblExtension.TabIndex = 1;
@@ -194,7 +194,7 @@
             // txtExtension
             // 
             this.txtExtension.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExtension.Location = new System.Drawing.Point(485, 18);
+            this.txtExtension.Location = new System.Drawing.Point(685, 18);
             this.txtExtension.Name = "txtExtension";
             this.txtExtension.Size = new System.Drawing.Size(69, 20);
             this.txtExtension.TabIndex = 2;
@@ -217,7 +217,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(546, 295);
+            this.txtOutput.Size = new System.Drawing.Size(546, 224);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -239,7 +239,7 @@
             this.grdOutput.Location = new System.Drawing.Point(3, 3);
             this.grdOutput.Name = "grdOutput";
             this.grdOutput.ReadOnly = true;
-            this.grdOutput.Size = new System.Drawing.Size(546, 295);
+            this.grdOutput.Size = new System.Drawing.Size(746, 324);
             this.grdOutput.TabIndex = 7;
             this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GrdOutputCellContentClick);
             // 
@@ -299,7 +299,7 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 164);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(560, 327);
+            this.tabControl1.Size = new System.Drawing.Size(760, 356);
             this.tabControl1.TabIndex = 9;
             // 
             // tabGrid
@@ -308,7 +308,7 @@
             this.tabGrid.Location = new System.Drawing.Point(4, 22);
             this.tabGrid.Name = "tabGrid";
             this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGrid.Size = new System.Drawing.Size(552, 301);
+            this.tabGrid.Size = new System.Drawing.Size(752, 330);
             this.tabGrid.TabIndex = 0;
             this.tabGrid.Text = "Grid";
             this.tabGrid.UseVisualStyleBackColor = true;
@@ -319,7 +319,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(552, 301);
+            this.tabOutput.Size = new System.Drawing.Size(552, 230);
             this.tabOutput.TabIndex = 1;
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
@@ -336,7 +336,7 @@
             this.txtImageDirectory.Location = new System.Drawing.Point(15, 32);
             this.txtImageDirectory.Name = "txtImageDirectory";
             this.txtImageDirectory.ReadOnly = true;
-            this.txtImageDirectory.Size = new System.Drawing.Size(524, 20);
+            this.txtImageDirectory.Size = new System.Drawing.Size(724, 20);
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
@@ -346,7 +346,7 @@
             this.AcceptButton = this.btnGo;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 532);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.grpOptions);
             this.Controls.Add(this.chkTestMode);

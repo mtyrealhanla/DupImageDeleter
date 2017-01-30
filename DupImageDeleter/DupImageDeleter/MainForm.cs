@@ -89,6 +89,20 @@ namespace DupImageDeleter
         {
             this.fireInitControls = false;
 
+            if (!(Settings.Default.MainFormSize.Width == 0 || Settings.Default.MainFormSize.Height == 0))
+            {
+                this.WindowState = Settings.Default.MainFormWindowState;
+
+                // we don't want a minimized window at startup
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                }
+
+                this.Location = Settings.Default.MainFormLocation;
+                this.Size = Settings.Default.MainFormSize;
+            }
+
             this.txtImageDirectory.Text = Settings.Default.ImageDirectory;
             this.chkDeleteFilesWithSameName.Checked = Settings.Default.OptFilesWithSameName;
             this.txtExtension.Text = Settings.Default.OptExtensionToKeep;
@@ -572,6 +586,7 @@ namespace DupImageDeleter
                 ImageViewerForm viewer = new ImageViewerForm();
                 viewer.OriginalImagePath = folder + @"\" + originalImage;
                 viewer.DupImagePath = folder + @"\" + dupImage;
+                viewer.Owner = this;
                 viewer.Show();
             }
         }
@@ -615,6 +630,21 @@ namespace DupImageDeleter
             Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
             Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
             Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
+
+            Settings.Default.MainFormWindowState = this.WindowState;
+
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                // save location and size if the state is normal
+                Settings.Default.MainFormLocation = this.Location;
+                Settings.Default.MainFormSize = this.Size;
+            }
+            else
+            {
+                // save the RestoreBounds if the form is minimized or maximized!
+                Settings.Default.MainFormLocation = this.RestoreBounds.Location;
+                Settings.Default.MainFormSize = this.RestoreBounds.Size;
+            }
 
             Settings.Default.Save();
         }
