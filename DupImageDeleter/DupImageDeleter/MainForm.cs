@@ -548,19 +548,31 @@ namespace DupImageDeleter
             }
 
             string folder = senderGrid.Rows[e.RowIndex].Cells["Folder"].Value?.ToString();
+            string originalImage = senderGrid.Rows[e.RowIndex].Cells["OriginalImage"].Value?.ToString();
+            string dupImage = senderGrid.Rows[e.RowIndex].Cells["DuplicateImage"].Value?.ToString();
 
-            if (string.IsNullOrWhiteSpace(folder))
+            if (senderGrid.Columns[e.ColumnIndex].Name == "OpenFolder")
             {
-                return;
-            }
+                if (string.IsNullOrWhiteSpace(folder))
+                {
+                    return;
+                }
 
-            try
-            {
-                Process.Start(folder);
+                try
+                {
+                    Process.Start(folder);
+                }
+                catch (Exception ex)
+                {
+                    this.AddToOutput(ex.Message);
+                }
             }
-            catch (Exception ex)
+            else if (senderGrid.Columns[e.ColumnIndex].Name == "ViewImages")
             {
-                this.AddToOutput(ex.Message);
+                ImageViewerForm viewer = new ImageViewerForm();
+                viewer.OriginalImagePath = folder + @"\" + originalImage;
+                viewer.DupImagePath = folder + @"\" + dupImage;
+                viewer.Show();
             }
         }
 
@@ -621,48 +633,6 @@ namespace DupImageDeleter
             this.InitControls();
 
             this.chkRequireLikeFileNames.Checked = this.chkHashCheck.Checked;
-        }
-
-        /// <summary>
-        ///     The file attribute.
-        /// </summary>
-        private sealed class FileAttribute
-        {
-            /// <summary>
-            ///     Gets or sets the file info.
-            /// </summary>
-            public FileInfo FileInfo { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the like file name.
-            /// </summary>
-            public string LikeFileName { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file name without extension.
-            /// </summary>
-            public string FileNameWithoutExtension { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file hash.
-            /// </summary>
-            public string FileHash { get; set; }
-        }
-
-        /// <summary>
-        ///     The file attribute output.
-        /// </summary>
-        private sealed class FileAttributeOutput
-        {
-            /// <summary>
-            ///     Gets or sets the original file.
-            /// </summary>
-            public FileAttribute OriginalFile { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file to delete.
-            /// </summary>
-            public FileAttribute FileToDelete { get; set; }
         }
     }
 }

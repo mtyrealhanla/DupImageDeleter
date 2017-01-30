@@ -50,6 +50,7 @@
             this.OriginalImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DuplicateImage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.OpenFolder = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.ViewImages = new System.Windows.Forms.DataGridViewButtonColumn();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGrid = new System.Windows.Forms.TabPage();
             this.tabOutput = new System.Windows.Forms.TabPage();
@@ -232,7 +233,8 @@
             this.Folder,
             this.OriginalImage,
             this.DuplicateImage,
-            this.OpenFolder});
+            this.OpenFolder,
+            this.ViewImages});
             this.grdOutput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grdOutput.Location = new System.Drawing.Point(3, 3);
             this.grdOutput.Name = "grdOutput";
@@ -277,6 +279,15 @@
             this.OpenFolder.Text = "Open Folder";
             this.OpenFolder.UseColumnTextForButtonValue = true;
             this.OpenFolder.Width = 71;
+            // 
+            // ViewImages
+            // 
+            this.ViewImages.HeaderText = "View Images";
+            this.ViewImages.Name = "ViewImages";
+            this.ViewImages.ReadOnly = true;
+            this.ViewImages.Text = "View Images";
+            this.ViewImages.UseColumnTextForButtonValue = true;
+            this.ViewImages.Width = 73;
             // 
             // tabControl1
             // 
@@ -346,7 +357,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MinimumSize = new System.Drawing.Size(600, 500);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dup Image Deleter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
             this.Load += new System.EventHandler(this.MainFormLoad);
@@ -384,13 +394,14 @@
         private System.Windows.Forms.TabPage tabGrid;
         private System.Windows.Forms.TabPage tabOutput;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.CheckBox chkHashCheck;
+        private System.Windows.Forms.CheckBox chkRequireLikeFileNames;
         private System.Windows.Forms.DataGridViewTextBoxColumn Action;
         private System.Windows.Forms.DataGridViewTextBoxColumn Folder;
         private System.Windows.Forms.DataGridViewTextBoxColumn OriginalImage;
         private System.Windows.Forms.DataGridViewTextBoxColumn DuplicateImage;
         private System.Windows.Forms.DataGridViewButtonColumn OpenFolder;
-        private System.Windows.Forms.CheckBox chkHashCheck;
-        private System.Windows.Forms.CheckBox chkRequireLikeFileNames;
+        private System.Windows.Forms.DataGridViewButtonColumn ViewImages;
     }
 }
 
