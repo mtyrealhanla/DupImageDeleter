@@ -193,13 +193,10 @@ namespace DupImageDeleter
                                                   select
                                                       new FileAttribute
                                                       {
-                                                          FileFolder = f.DirectoryName,
-                                                          FileName = f.Name,
+                                                          FileInfo = f,
                                                           LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
                                                           FileNameWithoutExtension = fileNameWithoutExtension,
-                                                          FileExtension = f.Extension,
                                                           FileHash = GetHashFromFile(f.FullName),
-                                                          FileCreationTime = f.CreationTimeUtc
                                                       }).ToList();
 
             List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
@@ -221,7 +218,7 @@ namespace DupImageDeleter
                     continue;
                 }
 
-                FileInfo file = root.GetFiles(fileToDelete.FileToDelete.FileName).SingleOrDefault();
+                FileInfo file = fileToDelete.FileToDelete.FileInfo;
 
                 if (file == null)
                 {
@@ -233,9 +230,9 @@ namespace DupImageDeleter
                 this.AddToOutput($"{desc}: {file.FullName}");
                 this.AddToGrid(
                     desc,
-                    fileToDelete.FileToDelete.FileFolder,
-                    fileToDelete.OriginalFile?.FileName,
-                    fileToDelete.FileToDelete.FileName);
+                    fileToDelete.FileToDelete.FileInfo.DirectoryName,
+                    fileToDelete.OriginalFile.FileInfo.Name,
+                    fileToDelete.FileToDelete.FileInfo.Name);
 
                 if (testMode)
                 {
@@ -292,15 +289,15 @@ namespace DupImageDeleter
                     .Select(
                         group =>
                         fileAttributes.Where(x => this.CompareString(x.FileHash, group.Key.FileHash))
-                            .OrderBy(x => x.FileCreationTime)
-                            .ThenBy(x => x.FileName)
+                            .OrderBy(x => x.FileInfo.CreationTimeUtc)
+                            .ThenBy(x => x.FileInfo.Name)
                             .Take(1)
                             .SingleOrDefault())
                     .SelectMany(
                         original =>
                         fileAttributes.Where(
                             x =>
-                            this.CompareString(x.FileHash, original.FileHash) && !this.CompareString(x.FileName, original.FileName))
+                            this.CompareString(x.FileHash, original.FileHash) && !this.CompareString(x.FileInfo.Name, original.FileInfo.Name))
                             .Select(y => new FileAttributeOutput { OriginalFile = original, FileToDelete = y }))
                     .Where(x => x.OriginalFile != null && x.FileToDelete != null)
                     .ToList());
@@ -333,7 +330,7 @@ namespace DupImageDeleter
                         fileAttributes.Where(
                             x =>
                             this.CompareString(x.FileNameWithoutExtension, @group.Key)
-                            && !this.CompareString(x.FileExtension, $".{extension}")))
+                            && !this.CompareString(x.FileInfo.Extension, $".{extension}")))
                     .Select(
                         x =>
                         new FileAttributeOutput
@@ -344,7 +341,7 @@ namespace DupImageDeleter
                                         this.CompareString(
                                             y.FileNameWithoutExtension,
                                             x.FileNameWithoutExtension)
-                                        && this.CompareString(y.FileExtension, $".{extension}")),
+                                        && this.CompareString(y.FileInfo.Extension, $".{extension}")),
                                 FileToDelete = x
                             })
                     .Where(x => x.OriginalFile != null && x.FileToDelete != null)
@@ -612,15 +609,7 @@ namespace DupImageDeleter
         /// </summary>
         private sealed class FileAttribute
         {
-            /// <summary>
-            ///     Gets or sets the file folder.
-            /// </summary>
-            public string FileFolder { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file name.
-            /// </summary>
-            public string FileName { get; set; }
+            public FileInfo FileInfo { get; set; }
 
             public string LikeFileName { get; set; }
 
@@ -628,21 +617,10 @@ namespace DupImageDeleter
             ///     Gets or sets the file name without extension.
             /// </summary>
             public string FileNameWithoutExtension { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file extension.
-            /// </summary>
-            public string FileExtension { get; set; }
-
             /// <summary>
             ///     Gets or sets the file hash.
             /// </summary>
             public string FileHash { get; set; }
-
-            /// <summary>
-            ///     Gets or sets the file creation time.
-            /// </summary>
-            public DateTime FileCreationTime { get; set; }
         }
 
         /// <summary>
