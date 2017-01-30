@@ -34,6 +34,7 @@
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.chkTestMode = new System.Windows.Forms.CheckBox();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkRequireLikeFileNames = new System.Windows.Forms.CheckBox();
             this.chkHashCheck = new System.Windows.Forms.CheckBox();
             this.btnMoveDirectory = new System.Windows.Forms.Button();
             this.chkMoveInsteadOfDelete = new System.Windows.Forms.CheckBox();
@@ -54,7 +55,6 @@
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.chkRequireLikeFileNames = new System.Windows.Forms.CheckBox();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -126,14 +126,24 @@
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
             // 
+            // chkRequireLikeFileNames
+            // 
+            this.chkRequireLikeFileNames.AutoSize = true;
+            this.chkRequireLikeFileNames.Location = new System.Drawing.Point(197, 46);
+            this.chkRequireLikeFileNames.Name = "chkRequireLikeFileNames";
+            this.chkRequireLikeFileNames.Size = new System.Drawing.Size(259, 17);
+            this.chkRequireLikeFileNames.TabIndex = 7;
+            this.chkRequireLikeFileNames.Text = "Require Like File Names (i.e. Game-01, Game-02)";
+            this.chkRequireLikeFileNames.UseVisualStyleBackColor = true;
+            // 
             // chkHashCheck
             // 
             this.chkHashCheck.AutoSize = true;
             this.chkHashCheck.Location = new System.Drawing.Point(6, 46);
             this.chkHashCheck.Name = "chkHashCheck";
-            this.chkHashCheck.Size = new System.Drawing.Size(151, 17);
+            this.chkHashCheck.Size = new System.Drawing.Size(125, 17);
             this.chkHashCheck.TabIndex = 6;
-            this.chkHashCheck.Text = "Files with same MD5 Hash";
+            this.chkHashCheck.Text = "Files with same Hash";
             this.chkHashCheck.UseVisualStyleBackColor = true;
             this.chkHashCheck.CheckedChanged += new System.EventHandler(this.ChkHashCheckCheckedChanged);
             // 
@@ -194,9 +204,9 @@
             this.chkDeleteFilesWithSameName.AutoSize = true;
             this.chkDeleteFilesWithSameName.Location = new System.Drawing.Point(6, 20);
             this.chkDeleteFilesWithSameName.Name = "chkDeleteFilesWithSameName";
-            this.chkDeleteFilesWithSameName.Size = new System.Drawing.Size(233, 17);
+            this.chkDeleteFilesWithSameName.Size = new System.Drawing.Size(356, 17);
             this.chkDeleteFilesWithSameName.TabIndex = 0;
-            this.chkDeleteFilesWithSameName.Text = "Files with same name but different extension";
+            this.chkDeleteFilesWithSameName.Text = "Files with same name but different extension (may not be same image!)";
             this.chkDeleteFilesWithSameName.UseVisualStyleBackColor = true;
             this.chkDeleteFilesWithSameName.CheckedChanged += new System.EventHandler(this.ChkDeleteFilesWithSameNameCheckedChanged);
             // 
@@ -319,16 +329,6 @@
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
-            // 
-            // chkRequireLikeFileNames
-            // 
-            this.chkRequireLikeFileNames.AutoSize = true;
-            this.chkRequireLikeFileNames.Location = new System.Drawing.Point(197, 46);
-            this.chkRequireLikeFileNames.Name = "chkRequireLikeFileNames";
-            this.chkRequireLikeFileNames.Size = new System.Drawing.Size(259, 17);
-            this.chkRequireLikeFileNames.TabIndex = 7;
-            this.chkRequireLikeFileNames.Text = "Require Like File Names (i.e. Game-01, Game-02)";
-            this.chkRequireLikeFileNames.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 

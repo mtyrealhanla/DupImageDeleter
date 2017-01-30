@@ -142,6 +142,24 @@ namespace DupImageDeleter
                                      || !string.IsNullOrWhiteSpace(this.txtExtension.Text));
         }
 
+        private string GetLikeFileName(string fileName)
+        {
+            if(string.IsNullOrWhiteSpace(fileName))
+            {
+                return fileName;
+            }
+
+            // launchbox uses -01, -02 convention
+            int index = fileName.LastIndexOf('-');
+
+            if(index >= 0)
+            {
+                return fileName.Substring(0, index);
+            }
+
+            return fileName;
+        }
+
         /// <summary>
         /// The walk directory tree.
         /// </summary>
@@ -171,18 +189,18 @@ namespace DupImageDeleter
             }
 
             List<FileAttribute> fileAttributes = (from f in files
+                                                  let fileNameWithoutExtension = Path.GetFileNameWithoutExtension(f.Name)
                                                   select
                                                       new FileAttribute
-                                                          {
-                                                              FileFolder = f.DirectoryName,
-                                                              FileName = f.Name,
-                                                              FileNameWithoutExtension =
-                                                                  Path.GetFileNameWithoutExtension(f.Name),
-                                                              FileExtension = f.Extension,
-                                                              FileHash = GetHashFromFile(f.FullName),
-                                                              FileCreationTime = f.CreationTimeUtc
-                                                          }).ToList
-                ();
+                                                      {
+                                                          FileFolder = f.DirectoryName,
+                                                          FileName = f.Name,
+                                                          LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
+                                                          FileNameWithoutExtension = fileNameWithoutExtension,
+                                                          FileExtension = f.Extension,
+                                                          FileHash = GetHashFromFile(f.FullName),
+                                                          FileCreationTime = f.CreationTimeUtc
+                                                      }).ToList();
 
             List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
 
@@ -251,7 +269,7 @@ namespace DupImageDeleter
                 }
             }
         }
-
+        
         /// <summary>
         /// The delete files with hash check.
         /// </summary>
@@ -265,8 +283,11 @@ namespace DupImageDeleter
             List<FileAttribute> fileAttributes,
             List<FileAttributeOutput> filesToDelete)
         {
+            bool requireLikeFileNames = this.chkRequireLikeFileNames.Checked;
+
             filesToDelete.AddRange(
-                fileAttributes.GroupBy(f => new { f.FileHash })
+                fileAttributes
+                    .GroupBy(f => new { f.FileHash, LikeFileName = requireLikeFileNames ? f.LikeFileName : string.Empty })
                     .Where(group => group.Count() > 1)
                     .Select(
                         group =>
@@ -600,6 +621,8 @@ namespace DupImageDeleter
             ///     Gets or sets the file name.
             /// </summary>
             public string FileName { get; set; }
+
+            public string LikeFileName { get; set; }
 
             /// <summary>
             ///     Gets or sets the file name without extension.
