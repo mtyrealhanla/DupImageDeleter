@@ -56,6 +56,8 @@
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.lblProgressOutput = new System.Windows.Forms.Label();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -217,7 +219,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(546, 224);
+            this.txtOutput.Size = new System.Drawing.Size(746, 324);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -319,7 +321,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(552, 230);
+            this.tabOutput.Size = new System.Drawing.Size(752, 330);
             this.tabOutput.TabIndex = 1;
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
@@ -341,12 +343,31 @@
             this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.progressBar.Location = new System.Drawing.Point(12, 526);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(191, 23);
+            this.progressBar.TabIndex = 10;
+            // 
+            // lblProgressOutput
+            // 
+            this.lblProgressOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblProgressOutput.AutoSize = true;
+            this.lblProgressOutput.Location = new System.Drawing.Point(209, 531);
+            this.lblProgressOutput.Name = "lblProgressOutput";
+            this.lblProgressOutput.Size = new System.Drawing.Size(0, 13);
+            this.lblProgressOutput.TabIndex = 11;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnGo;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.lblProgressOutput);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.grpOptions);
             this.Controls.Add(this.chkTestMode);
@@ -354,8 +375,7 @@
             this.Controls.Add(this.txtImageDirectory);
             this.Controls.Add(this.lblImageDirectory);
             this.Controls.Add(this.btnGo);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(600, 500);
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainForm";
             this.Text = "Dup Image Deleter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
@@ -402,6 +422,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DuplicateImage;
         private System.Windows.Forms.DataGridViewButtonColumn OpenFolder;
         private System.Windows.Forms.DataGridViewButtonColumn ViewImages;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label lblProgressOutput;
     }
 }
 

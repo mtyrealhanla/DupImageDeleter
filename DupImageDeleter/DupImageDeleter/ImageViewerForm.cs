@@ -30,7 +30,7 @@ namespace DupImageDeleter
         public string OriginalImagePath { get; set; }
 
         /// <summary>
-        /// Gets or sets the dup image path.
+        ///     Gets or sets the dup image path.
         /// </summary>
         public string DupImagePath { get; set; }
 
@@ -48,8 +48,8 @@ namespace DupImageDeleter
             this.pictureBox1.ImageLocation = this.OriginalImagePath;
             this.pictureBox2.ImageLocation = this.DupImagePath;
 
-            this.lblOriginal.Text = this.pictureBox1.ImageLocation;
-            this.lblDuplicate.Text = this.pictureBox2.ImageLocation;
+            this.lblOriginal.Text = $"Original Image: {this.pictureBox1.ImageLocation}";
+            this.lblDuplicate.Text = $"Duplicate Image: { this.pictureBox2.ImageLocation}";
         }
     }
 }

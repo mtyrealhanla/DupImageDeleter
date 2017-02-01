@@ -14,6 +14,8 @@ namespace DupImageDeleter
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     using DupImageDeleter.Properties;
@@ -178,17 +180,17 @@ namespace DupImageDeleter
             return fileName.Trim();
         }
 
-        /// <summary>
-        /// The walk directory tree.
-        /// </summary>
-        /// <param name="root">
-        /// The root.
-        /// </param>
-        private void WalkDirectoryTree(DirectoryInfo root)
+        private void WalkDirectoryTree(
+            DirectoryInfo root,
+            IProgress<string> outputProgress,
+            IProgress<GridOutputRow> gridProgress)
         {
             string extension = this.txtExtension.Text;
             bool testMode = this.chkTestMode.Checked;
             bool move = this.chkMoveInsteadOfDelete.Checked;
+            bool hash = this.chkHashCheck.Checked;
+
+            outputProgress.Report($"Scanning Directory: {root.Name}");
 
             FileInfo[] files = null;
 
@@ -198,7 +200,7 @@ namespace DupImageDeleter
             }
             catch (Exception e)
             {
-                this.AddToOutput(e.Message);
+                outputProgress.Report(e.Message);
             }
 
             if (files == null)
@@ -213,14 +215,10 @@ namespace DupImageDeleter
                                                       new FileAttribute
                                                           {
                                                               FileInfo = f,
-                                                              LikeFileName =
-                                                                  this.GetLikeFileName(
-                                                                      fileNameWithoutExtension),
-                                                              FileNameWithoutExtension =
-                                                                  fileNameWithoutExtension,
-                                                              FileHash = GetHashFromFile(f.FullName)
-                                                          })
-                .ToList();
+                                                              LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
+                                                              FileNameWithoutExtension = fileNameWithoutExtension,
+                                                              FileHash = hash ? GetHashFromFile(f.FullName) : string.Empty
+                                                          }).ToList();
 
             List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
 
@@ -229,7 +227,7 @@ namespace DupImageDeleter
                 this.DeleteFilesWithSameName(extension, fileAttributes, filesToDelete);
             }
 
-            if (this.chkHashCheck.Checked)
+            if (hash)
             {
                 this.DeleteFilesWithHashCheck(fileAttributes, filesToDelete);
             }
@@ -245,12 +243,15 @@ namespace DupImageDeleter
 
                 string desc = (move ? "Move" : "Delete") + (testMode ? " (Test Mode)" : string.Empty);
 
-                this.AddToOutput($"{desc}: {file.FullName}");
-                this.AddToGrid(
-                    desc,
-                    fileToDelete.FileToDelete.FileInfo.DirectoryName,
-                    fileToDelete.OriginalFile.FileInfo.Name,
-                    fileToDelete.FileToDelete.FileInfo.Name);
+                outputProgress.Report($"{desc}: {file.FullName}");
+                gridProgress.Report(
+                    new GridOutputRow
+                        {
+                            Action = desc,
+                            Folder = fileToDelete.FileToDelete.FileInfo.DirectoryName,
+                            OriginalFile = fileToDelete.OriginalFile.FileInfo.Name,
+                            DuplicateFile = fileToDelete.FileToDelete.FileInfo.Name
+                        });
 
                 if (testMode)
                 {
@@ -282,17 +283,7 @@ namespace DupImageDeleter
                 }
                 catch (Exception e)
                 {
-                    this.AddToOutput(e.Message);
-                }
-            }
-
-            DirectoryInfo[] subDirs = root.GetDirectories();
-
-            foreach (DirectoryInfo dirInfo in subDirs)
-            {
-                if (!this.CompareString(dirInfo.Name, "Cache"))
-                {
-                    this.WalkDirectoryTree(dirInfo);
+                    outputProgress.Report(e.Message);
                 }
             }
         }
@@ -419,17 +410,6 @@ namespace DupImageDeleter
         }
 
         /// <summary>
-        /// The add to output.
-        /// </summary>
-        /// <param name="output">
-        /// The output.
-        /// </param>
-        private void AddToOutput(string output)
-        {
-            this.txtOutput.AppendText(output + Environment.NewLine);
-        }
-
-        /// <summary>
         /// The btn go_ click.
         /// </summary>
         /// <param name="sender">
@@ -438,8 +418,10 @@ namespace DupImageDeleter
         /// <param name="e">
         /// The e.
         /// </param>
-        private void BtnGoClick(object sender, EventArgs e)
+        private async void BtnGoClick(object sender, EventArgs e)
         {
+            this.lblProgressOutput.Text = string.Empty;
+            this.progressBar.Value = 0;
             this.grdOutput.Rows.Clear();
             this.grdOutput.Refresh();
 
@@ -447,18 +429,77 @@ namespace DupImageDeleter
 
             DirectoryInfo root = new DirectoryInfo(this.txtImageDirectory.Text);
 
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
+            Progress<string> outputProgressHandler =
+                new Progress<string>(
+                    value =>
+                        {
+                            this.txtOutput.AppendText(value + Environment.NewLine);
 
-                this.WalkDirectoryTree(root);
+                            if (value == "Finished!")
+                            {
+                                this.lblProgressOutput.Text = value;
+                            }
+                        });
 
-                this.AddToOutput("Finished!");
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
-            }
+            Progress<GridOutputRow> gridProgressHandler = new Progress<GridOutputRow>(
+                value =>
+                    {
+                        this.grdOutput.Rows.Add(value.Action, value.Folder, value.OriginalFile, value.DuplicateFile);
+                        this.grdOutput.Refresh();
+                    });
+
+            Progress<string> progressBarProgressHandler = new Progress<string>(
+                value =>
+                    {
+                        this.lblProgressOutput.Text = value;
+                        this.lblProgressOutput.Refresh();
+
+                        this.progressBar.PerformStep();
+                        this.progressBar.Refresh();
+
+                        Thread.Sleep(250);
+                    });
+
+            IProgress<string> outputProgress = outputProgressHandler;
+            IProgress<GridOutputRow> gridProgress = gridProgressHandler;
+            IProgress<string> progressBarProgress = progressBarProgressHandler;
+
+            this.btnGo.Enabled = false;
+
+            List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", SearchOption.AllDirectories).Where(x => !this.CompareString(x.Name, "Cache")).ToList();
+            allDirectoryInfos.Insert(0, root);
+
+            this.progressBar.Minimum = 0;
+            this.progressBar.Maximum = allDirectoryInfos.Count * 2;
+            this.progressBar.Step = 1;
+
+            await Task.Run(
+                () =>
+                    {
+                        try
+                        {
+                            Cursor.Current = Cursors.WaitCursor;
+
+                            foreach (DirectoryInfo directoryInfo in allDirectoryInfos)
+                            {
+                                progressBarProgress.Report(directoryInfo.FullName);
+
+                                this.WalkDirectoryTree(
+                                    directoryInfo,
+                                    outputProgress,
+                                    gridProgress);
+
+                                progressBarProgress.Report(directoryInfo.FullName);
+                            }
+                        }
+                        finally
+                        {
+                            Cursor.Current = Cursors.Default;
+                        }
+                    });
+
+            outputProgress.Report("Finished!");
+            this.InitControls();
         }
 
         /// <summary>
@@ -578,7 +619,7 @@ namespace DupImageDeleter
                 }
                 catch (Exception ex)
                 {
-                    this.AddToOutput(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else if (senderGrid.Columns[e.ColumnIndex].Name == "ViewImages")
@@ -589,27 +630,6 @@ namespace DupImageDeleter
                 viewer.Owner = this;
                 viewer.Show();
             }
-        }
-
-        /// <summary>
-        /// The add to grid.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="folder">
-        /// The folder.
-        /// </param>
-        /// <param name="originalFile">
-        /// The original file.
-        /// </param>
-        /// <param name="duplicateFile">
-        /// The duplicate file.
-        /// </param>
-        private void AddToGrid(string action, string folder, string originalFile, string duplicateFile)
-        {
-            this.grdOutput.Rows.Add(action, folder, originalFile, duplicateFile);
-            this.grdOutput.Refresh();
         }
 
         /// <summary>
@@ -663,6 +683,32 @@ namespace DupImageDeleter
             this.InitControls();
 
             this.chkRequireLikeFileNames.Checked = this.chkHashCheck.Checked;
+        }
+
+        /// <summary>
+        /// The grid output row.
+        /// </summary>
+        private sealed class GridOutputRow
+        {
+            /// <summary>
+            /// Gets or sets the action.
+            /// </summary>
+            public string Action { get; set; }
+
+            /// <summary>
+            /// Gets or sets the folder.
+            /// </summary>
+            public string Folder { get; set; }
+
+            /// <summary>
+            /// Gets or sets the original file.
+            /// </summary>
+            public string OriginalFile { get; set; }
+
+            /// <summary>
+            /// Gets or sets the duplicate file.
+            /// </summary>
+            public string DuplicateFile { get; set; }
         }
     }
 }
