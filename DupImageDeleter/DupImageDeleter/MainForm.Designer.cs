@@ -54,16 +54,13 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGrid = new System.Windows.Forms.TabPage();
             this.tabOutput = new System.Windows.Forms.TabPage();
-            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.lblProgressOutput = new System.Windows.Forms.Label();
+            this.progressBar = new DupImageDeleter.TextProgressBar();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabGrid.SuspendLayout();
             this.tabOutput.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnGo
@@ -326,11 +323,6 @@
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
             // 
-            // fileSystemWatcher1
-            // 
-            this.fileSystemWatcher1.EnableRaisingEvents = true;
-            this.fileSystemWatcher1.SynchronizingObject = this;
-            // 
             // txtImageDirectory
             // 
             this.txtImageDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -345,20 +337,13 @@
             // 
             // progressBar
             // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.ForeColor = System.Drawing.SystemColors.ControlText;
             this.progressBar.Location = new System.Drawing.Point(12, 526);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(191, 23);
+            this.progressBar.Size = new System.Drawing.Size(596, 23);
             this.progressBar.TabIndex = 10;
-            // 
-            // lblProgressOutput
-            // 
-            this.lblProgressOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblProgressOutput.AutoSize = true;
-            this.lblProgressOutput.Location = new System.Drawing.Point(209, 531);
-            this.lblProgressOutput.Name = "lblProgressOutput";
-            this.lblProgressOutput.Size = new System.Drawing.Size(0, 13);
-            this.lblProgressOutput.TabIndex = 11;
             // 
             // MainForm
             // 
@@ -366,7 +351,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.lblProgressOutput);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.grpOptions);
@@ -386,7 +370,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabGrid.ResumeLayout(false);
             this.tabOutput.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -413,7 +396,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabGrid;
         private System.Windows.Forms.TabPage tabOutput;
-        private System.IO.FileSystemWatcher fileSystemWatcher1;
         private System.Windows.Forms.CheckBox chkHashCheck;
         private System.Windows.Forms.CheckBox chkRequireLikeFileNames;
         private System.Windows.Forms.DataGridViewTextBoxColumn Action;
@@ -422,8 +404,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DuplicateImage;
         private System.Windows.Forms.DataGridViewButtonColumn OpenFolder;
         private System.Windows.Forms.DataGridViewButtonColumn ViewImages;
-        private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label lblProgressOutput;
+        private DupImageDeleter.TextProgressBar progressBar;
     }
 }
 

@@ -17,6 +17,7 @@ namespace DupImageDeleter
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using System.Drawing;
 
     using DupImageDeleter.Properties;
 
@@ -29,6 +30,11 @@ namespace DupImageDeleter
         ///     The fire init controls.
         /// </summary>
         private bool fireInitControls = true;
+
+        /// <summary>
+        ///     The prevent close.
+        /// </summary>
+        private bool preventClose = false;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
@@ -127,6 +133,8 @@ namespace DupImageDeleter
             {
                 return;
             }
+
+            this.btnDirectorySelector.Enabled = true;
 
             this.txtExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
             this.lblExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
@@ -408,7 +416,7 @@ namespace DupImageDeleter
                 }
             }
         }
-
+        
         /// <summary>
         /// The btn go_ click.
         /// </summary>
@@ -420,7 +428,9 @@ namespace DupImageDeleter
         /// </param>
         private async void BtnGoClick(object sender, EventArgs e)
         {
-            this.lblProgressOutput.Text = string.Empty;
+            this.preventClose = true;
+
+            this.progressBar.Text = string.Empty;
             this.progressBar.Value = 0;
             this.grdOutput.Rows.Clear();
             this.grdOutput.Refresh();
@@ -434,11 +444,6 @@ namespace DupImageDeleter
                     value =>
                         {
                             this.txtOutput.AppendText(value + Environment.NewLine);
-
-                            if (value == "Finished!")
-                            {
-                                this.lblProgressOutput.Text = value;
-                            }
                         });
 
             Progress<GridOutputRow> gridProgressHandler = new Progress<GridOutputRow>(
@@ -451,13 +456,14 @@ namespace DupImageDeleter
             Progress<string> progressBarProgressHandler = new Progress<string>(
                 value =>
                     {
-                        this.lblProgressOutput.Text = value;
-                        this.lblProgressOutput.Refresh();
-
+                        this.progressBar.Text = value;
                         this.progressBar.PerformStep();
                         this.progressBar.Refresh();
 
-                        Thread.Sleep(250);
+                        if(this.progressBar.Value == this.progressBar.Maximum)
+                        {
+                            this.progressBar.Text = "Finished!";
+                        }
                     });
 
             IProgress<string> outputProgress = outputProgressHandler;
@@ -465,12 +471,13 @@ namespace DupImageDeleter
             IProgress<string> progressBarProgress = progressBarProgressHandler;
 
             this.btnGo.Enabled = false;
+            this.btnDirectorySelector.Enabled = false;
 
             List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", SearchOption.AllDirectories).Where(x => !this.CompareString(x.Name, "Cache")).ToList();
             allDirectoryInfos.Insert(0, root);
 
             this.progressBar.Minimum = 0;
-            this.progressBar.Maximum = allDirectoryInfos.Count * 2;
+            this.progressBar.Maximum = allDirectoryInfos.Count;
             this.progressBar.Step = 1;
 
             await Task.Run(
@@ -488,8 +495,6 @@ namespace DupImageDeleter
                                     directoryInfo,
                                     outputProgress,
                                     gridProgress);
-
-                                progressBarProgress.Report(directoryInfo.FullName);
                             }
                         }
                         finally
@@ -500,6 +505,8 @@ namespace DupImageDeleter
 
             outputProgress.Report("Finished!");
             this.InitControls();
+
+            this.preventClose = false;
         }
 
         /// <summary>
@@ -643,30 +650,38 @@ namespace DupImageDeleter
         /// </param>
         private void MainFormFormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.ImageDirectory = this.txtImageDirectory.Text;
-            Settings.Default.OptFilesWithSameName = this.chkDeleteFilesWithSameName.Checked;
-            Settings.Default.OptExtensionToKeep = this.txtExtension.Text;
-            Settings.Default.OptMoveDuplicates = this.chkMoveInsteadOfDelete.Checked;
-            Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
-            Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
-            Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
-
-            Settings.Default.MainFormWindowState = this.WindowState;
-
-            if (this.WindowState == FormWindowState.Normal)
+            if(e.CloseReason == CloseReason.UserClosing && this.preventClose)
             {
-                // save location and size if the state is normal
-                Settings.Default.MainFormLocation = this.Location;
-                Settings.Default.MainFormSize = this.Size;
+                e.Cancel = true;
+                MessageBox.Show("Please wait until the operation completes.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                // save the RestoreBounds if the form is minimized or maximized!
-                Settings.Default.MainFormLocation = this.RestoreBounds.Location;
-                Settings.Default.MainFormSize = this.RestoreBounds.Size;
-            }
+                Settings.Default.ImageDirectory = this.txtImageDirectory.Text;
+                Settings.Default.OptFilesWithSameName = this.chkDeleteFilesWithSameName.Checked;
+                Settings.Default.OptExtensionToKeep = this.txtExtension.Text;
+                Settings.Default.OptMoveDuplicates = this.chkMoveInsteadOfDelete.Checked;
+                Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
+                Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
+                Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
 
-            Settings.Default.Save();
+                Settings.Default.MainFormWindowState = this.WindowState;
+
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    // save location and size if the state is normal
+                    Settings.Default.MainFormLocation = this.Location;
+                    Settings.Default.MainFormSize = this.Size;
+                }
+                else
+                {
+                    // save the RestoreBounds if the form is minimized or maximized!
+                    Settings.Default.MainFormLocation = this.RestoreBounds.Location;
+                    Settings.Default.MainFormSize = this.RestoreBounds.Size;
+                }
+
+                Settings.Default.Save();
+            }
         }
 
         /// <summary>
