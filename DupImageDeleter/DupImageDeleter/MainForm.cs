@@ -216,17 +216,30 @@ namespace DupImageDeleter
                 return;
             }
 
+            List<string> extensions = new List<string>
+                                          {
+                                              ".png",
+                                              ".jpg",
+                                              ".jpeg",
+                                              ".bmp",
+                                              ".tif",
+                                              ".tiff",
+                                              ".gif"
+                                          };
+
             List<FileAttribute> fileAttributes = (from f in files
                                                   let fileNameWithoutExtension =
                                                       Path.GetFileNameWithoutExtension(f.Name)
+                                                  where extensions.Contains(f.Extension)
                                                   select
                                                       new FileAttribute
                                                           {
                                                               FileInfo = f,
                                                               LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
                                                               FileNameWithoutExtension = fileNameWithoutExtension,
-                                                              FileHash = hash ? GetHashFromFile(f.FullName) : string.Empty
-                                                          }).ToList();
+                                                              FileHash = hash ? GetHashFromFile(f.FullName) : string.Empty,
+                                                              Resolution = this.GetResolution(f.FullName)
+                                                      }).ToList();
 
             List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
 
@@ -722,6 +735,33 @@ namespace DupImageDeleter
         private void RadMoveCheckedChanged(object sender, EventArgs e)
         {
             this.InitControls();
+        }
+
+        /// <summary>
+        /// The get resolution.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        private int GetResolution(string fileName)
+        {
+            int resolution;
+
+            using (FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                using (Image img = Image.FromStream(file, false, false))
+                {
+                    float width = img.PhysicalDimension.Width;
+                    float height = img.PhysicalDimension.Height;
+
+                    resolution = (int)(width * height);
+                }
+            }
+
+            return resolution;
         }
 
         /// <summary>

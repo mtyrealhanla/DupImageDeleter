@@ -35,5 +35,10 @@ namespace DupImageDeleter
         ///     Gets or sets the file hash.
         /// </summary>
         public string FileHash { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resolution.
+        /// </summary>
+        public int Resolution { get; set; }
     }
 }
