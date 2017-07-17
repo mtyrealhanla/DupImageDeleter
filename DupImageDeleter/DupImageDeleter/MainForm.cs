@@ -11,13 +11,12 @@ namespace DupImageDeleter
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using System.Drawing;
 
     using DupImageDeleter.Properties;
 
@@ -34,7 +33,7 @@ namespace DupImageDeleter
         /// <summary>
         ///     The prevent close.
         /// </summary>
-        private bool preventClose = false;
+        private bool preventClose;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
@@ -338,25 +337,23 @@ namespace DupImageDeleter
             bool requireLikeFileNames = this.chkRequireLikeFileNames.Checked;
 
             filesToDelete.AddRange(
-                fileAttributes.GroupBy(
-                    f => new { f.FileHash, LikeFileName = requireLikeFileNames ? f.LikeFileName : string.Empty })
+                fileAttributes.GroupBy(f => new { f.FileHash, LikeFileName = requireLikeFileNames ? f.LikeFileName : string.Empty })
                     .Where(group => group.Count() > 1)
                     .Select(
-                        group =>
-                        fileAttributes.Where(x => this.CompareString(x.FileHash, group.Key.FileHash))
+                        group => group
                             .OrderBy(x => x.FileInfo.CreationTimeUtc)
                             .ThenBy(x => x.FileInfo.Name)
                             .Take(1)
-                            .SingleOrDefault())
+                            .Single())
                     .SelectMany(
                         original =>
-                        fileAttributes.Where(
-                            x =>
-                            this.CompareString(x.FileHash, original.FileHash)
-                            && !this.CompareString(x.FileInfo.Name, original.FileInfo.Name))
-                            .Select(y => new FileAttributeOutput { OriginalFile = original, FileToDelete = y }))
-                    .Where(x => x.OriginalFile != null && x.FileToDelete != null)
-                    .ToList());
+                        fileAttributes.Where(x => this.CompareString(x.FileHash, original.FileHash) && x != original)
+                            .Select(y => 
+                                new FileAttributeOutput
+                                {
+                                    OriginalFile = original,
+                                    FileToDelete = y
+                                })));
 
             fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
         }
@@ -372,20 +369,23 @@ namespace DupImageDeleter
         /// </param>
         private void DeleteFilesWithSameNameAndLowerResolutions(List<FileAttribute> fileAttributes, List<FileAttributeOutput> filesToDelete)
         {
-            IEnumerable<IGrouping<string, FileAttribute>> fileGroup = fileAttributes.GroupBy(f => f.FileNameWithoutExtension).Where(group => group.Count() > 1);
-
-            var filesToKeep = fileGroup
-                .SelectMany(group => 
-                    fileAttributes
-                        .Where(x => this.CompareString(x.FileNameWithoutExtension, group.Key))
-                        .OrderByDescending(x => x.Resolution)
-                        .Take(1)
-                        .Select(x => x))
-                        .ToDictionary(x => x.FileNameWithoutExtension);
-
             filesToDelete.AddRange(
-                fileAttributes.Select(x => new FileAttributeOutput { OriginalFile = filesToKeep[x.FileNameWithoutExtension], FileToDelete = x })
-                    .Where(x => x.OriginalFile != null && x.FileToDelete != null && x.OriginalFile != x.FileToDelete).ToList());
+                fileAttributes.GroupBy(f => f.FileNameWithoutExtension)
+                    .Where(group => group.Count() > 1)
+                    .Select(
+                        group => group
+                                .OrderByDescending(x => x.Resolution)
+                                .Take(1)
+                                .Single())
+                    .SelectMany(
+                        original =>
+                            fileAttributes.Where(x => this.CompareString(x.FileNameWithoutExtension, original.FileNameWithoutExtension) && original != x)
+                                .Select(y =>
+                                    new FileAttributeOutput
+                                        {
+                                            OriginalFile = original,
+                                            FileToDelete = y
+                                        })));
 
             fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
         }
@@ -409,29 +409,12 @@ namespace DupImageDeleter
             List<FileAttributeOutput> filesToDelete)
         {
             filesToDelete.AddRange(
-                fileAttributes.GroupBy(f => f.FileNameWithoutExtension)
-                    .Where(group => @group.Count() > 1)
+                fileAttributes.GroupBy(f => f.FileNameWithoutExtension).Where(group => group.Count() > 1)
+                    .Select(group => group.Single(x => this.CompareString(x.FileInfo.Extension, $".{extension}")))
                     .SelectMany(
-                        group =>
-                        fileAttributes.Where(
-                            x =>
-                            this.CompareString(x.FileNameWithoutExtension, @group.Key)
-                            && !this.CompareString(x.FileInfo.Extension, $".{extension}")))
-                    .Select(
-                        x =>
-                        new FileAttributeOutput
-                            {
-                                OriginalFile =
-                                    fileAttributes.SingleOrDefault(
-                                        y =>
-                                        this.CompareString(
-                                            y.FileNameWithoutExtension,
-                                            x.FileNameWithoutExtension)
-                                        && this.CompareString(y.FileInfo.Extension, $".{extension}")),
-                                FileToDelete = x
-                            })
-                    .Where(x => x.OriginalFile != null && x.FileToDelete != null)
-                    .ToList());
+                        original => fileAttributes
+                            .Where(x => this.CompareString(x.FileNameWithoutExtension, original.FileNameWithoutExtension) && x != original)
+                            .Select(x => new FileAttributeOutput { OriginalFile = original, FileToDelete = x })));
 
             fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
         }
@@ -675,10 +658,12 @@ namespace DupImageDeleter
             }
             else if (senderGrid.Columns[e.ColumnIndex].Name == "ViewImages")
             {
-                ImageViewerForm viewer = new ImageViewerForm();
-                viewer.OriginalImagePath = folder + @"\" + originalImage;
-                viewer.DupImagePath = folder + @"\" + dupImage;
-                viewer.Owner = this;
+                ImageViewerForm viewer = new ImageViewerForm
+                                             {
+                                                 OriginalImagePath = folder + @"\" + originalImage,
+                                                 DupImagePath = folder + @"\" + dupImage,
+                                                 Owner = this
+                                             };
                 viewer.Show();
             }
         }

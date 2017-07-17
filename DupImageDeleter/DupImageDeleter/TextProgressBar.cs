@@ -27,11 +27,11 @@ namespace DupImageDeleter
             base.WndProc(ref m);
             if (m.Msg == 0x000F)
             {
-                using (Graphics graphics = CreateGraphics())
-                using (SolidBrush brush = new SolidBrush(ForeColor))
+                using (Graphics graphics = this.CreateGraphics())
+                using (SolidBrush brush = new SolidBrush(this.ForeColor))
                 {
-                    SizeF textSize = graphics.MeasureString(Text, Font);
-                    graphics.DrawString(Text, Font, brush, 5, (Height - textSize.Height) / 2);
+                    SizeF textSize = graphics.MeasureString(this.Text, this.Font);
+                    graphics.DrawString(this.Text, this.Font, brush, 5, (this.Height - textSize.Height) / 2);
                 }
             }
         }
@@ -40,14 +40,11 @@ namespace DupImageDeleter
         [Browsable(true)]
         public override string Text
         {
-            get
-            {
-                return base.Text;
-            }
+            get => base.Text;
             set
             {
                 base.Text = value;
-                Refresh();
+                this.Refresh();
             }
         }
 
@@ -55,14 +52,11 @@ namespace DupImageDeleter
         [Browsable(true)]
         public override Font Font
         {
-            get
-            {
-                return base.Font;
-            }
+            get => base.Font;
             set
             {
                 base.Font = value;
-                Refresh();
+                this.Refresh();
             }
         }
     }
