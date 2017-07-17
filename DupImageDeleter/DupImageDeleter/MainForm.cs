@@ -138,10 +138,16 @@ namespace DupImageDeleter
 
             this.txtExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
             this.lblExtension.Enabled = this.chkDeleteFilesWithSameName.Checked;
+            this.chkPreferHigherResolution.Enabled = this.chkDeleteFilesWithSameName.Checked;
 
             if (!this.txtExtension.Enabled)
             {
                 this.txtExtension.Text = null;
+            }
+
+            if (!this.chkPreferHigherResolution.Enabled)
+            {
+                this.chkPreferHigherResolution.Checked = false;
             }
 
             this.txtMoveDirectory.Enabled = this.radMove.Checked;
@@ -158,7 +164,7 @@ namespace DupImageDeleter
                                  && (!this.radMove.Checked
                                      || !string.IsNullOrWhiteSpace(this.txtMoveDirectory.Text))
                                  && (!this.chkDeleteFilesWithSameName.Checked
-                                     || !string.IsNullOrWhiteSpace(this.txtExtension.Text));
+                                     || (!string.IsNullOrWhiteSpace(this.txtExtension.Text) || this.chkPreferHigherResolution.Checked));
         }
 
         /// <summary>
@@ -245,7 +251,14 @@ namespace DupImageDeleter
 
             if (this.chkDeleteFilesWithSameName.Checked)
             {
-                this.DeleteFilesWithSameName(extension, fileAttributes, filesToDelete);
+                if (this.chkPreferHigherResolution.Checked)
+                {
+                    this.DeleteFilesWithSameNameAndLowerResolutions(fileAttributes, filesToDelete);
+                }
+                else
+                {
+                    this.DeleteFilesWithSameName(extension, fileAttributes, filesToDelete);
+                }
             }
 
             if (hash)
@@ -347,6 +360,36 @@ namespace DupImageDeleter
 
             fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
         }
+
+        /// <summary>
+        /// The delete files with same name and lower resolutions.
+        /// </summary>
+        /// <param name="fileAttributes">
+        /// The file attributes.
+        /// </param>
+        /// <param name="filesToDelete">
+        /// The files to delete.
+        /// </param>
+        private void DeleteFilesWithSameNameAndLowerResolutions(List<FileAttribute> fileAttributes, List<FileAttributeOutput> filesToDelete)
+        {
+            IEnumerable<IGrouping<string, FileAttribute>> fileGroup = fileAttributes.GroupBy(f => f.FileNameWithoutExtension).Where(group => group.Count() > 1);
+
+            var filesToKeep = fileGroup
+                .SelectMany(group => 
+                    fileAttributes
+                        .Where(x => this.CompareString(x.FileNameWithoutExtension, group.Key))
+                        .OrderByDescending(x => x.Resolution)
+                        .Take(1)
+                        .Select(x => x))
+                        .ToDictionary(x => x.FileNameWithoutExtension);
+
+            filesToDelete.AddRange(
+                fileAttributes.Select(x => new FileAttributeOutput { OriginalFile = filesToKeep[x.FileNameWithoutExtension], FileToDelete = x })
+                    .Where(x => x.OriginalFile != null && x.FileToDelete != null && x.OriginalFile != x.FileToDelete).ToList());
+
+            fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
+        }
+
 
         /// <summary>
         /// The delete files with same name.
@@ -683,6 +726,20 @@ namespace DupImageDeleter
 
                 Settings.Default.Save();
             }
+        }
+
+        /// <summary>
+        /// The chk prefer higher resolution checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void ChkPreferHigherResolutionCheckedChanged(object sender, EventArgs e)
+        {
+               this.InitControls();
         }
 
         /// <summary>

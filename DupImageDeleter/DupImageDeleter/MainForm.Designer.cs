@@ -59,6 +59,7 @@
             this.radDelete = new System.Windows.Forms.RadioButton();
             this.radPreview = new System.Windows.Forms.RadioButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
+            this.chkPreferHigherResolution = new System.Windows.Forms.CheckBox();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -101,6 +102,7 @@
             // 
             // grpOptions
             // 
+            this.grpOptions.Controls.Add(this.chkPreferHigherResolution);
             this.grpOptions.Controls.Add(this.chkRequireLikeFileNames);
             this.grpOptions.Controls.Add(this.chkHashCheck);
             this.grpOptions.Controls.Add(this.lblExtension);
@@ -108,7 +110,7 @@
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(0, 0);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(421, 159);
+            this.grpOptions.Size = new System.Drawing.Size(421, 140);
             this.grpOptions.TabIndex = 3;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Search Options";
@@ -116,7 +118,7 @@
             // chkRequireLikeFileNames
             // 
             this.chkRequireLikeFileNames.AutoSize = true;
-            this.chkRequireLikeFileNames.Location = new System.Drawing.Point(39, 98);
+            this.chkRequireLikeFileNames.Location = new System.Drawing.Point(39, 115);
             this.chkRequireLikeFileNames.Name = "chkRequireLikeFileNames";
             this.chkRequireLikeFileNames.Size = new System.Drawing.Size(259, 17);
             this.chkRequireLikeFileNames.TabIndex = 7;
@@ -126,7 +128,7 @@
             // chkHashCheck
             // 
             this.chkHashCheck.AutoSize = true;
-            this.chkHashCheck.Location = new System.Drawing.Point(6, 75);
+            this.chkHashCheck.Location = new System.Drawing.Point(6, 92);
             this.chkHashCheck.Name = "chkHashCheck";
             this.chkHashCheck.Size = new System.Drawing.Size(125, 17);
             this.chkHashCheck.TabIndex = 6;
@@ -212,7 +214,7 @@
             this.grdOutput.Location = new System.Drawing.Point(3, 3);
             this.grdOutput.Name = "grdOutput";
             this.grdOutput.ReadOnly = true;
-            this.grdOutput.Size = new System.Drawing.Size(746, 264);
+            this.grdOutput.Size = new System.Drawing.Size(746, 280);
             this.grdOutput.TabIndex = 7;
             this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GrdOutputCellContentClick);
             // 
@@ -269,10 +271,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabGrid);
             this.tabControl1.Controls.Add(this.tabOutput);
-            this.tabControl1.Location = new System.Drawing.Point(12, 224);
+            this.tabControl1.Location = new System.Drawing.Point(12, 208);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(760, 296);
+            this.tabControl1.Size = new System.Drawing.Size(760, 312);
             this.tabControl1.TabIndex = 9;
             // 
             // tabGrid
@@ -281,7 +283,7 @@
             this.tabGrid.Location = new System.Drawing.Point(4, 22);
             this.tabGrid.Name = "tabGrid";
             this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGrid.Size = new System.Drawing.Size(752, 270);
+            this.tabGrid.Size = new System.Drawing.Size(752, 286);
             this.tabGrid.TabIndex = 0;
             this.tabGrid.Text = "Grid";
             this.tabGrid.UseVisualStyleBackColor = true;
@@ -329,7 +331,7 @@
             this.grpCleanupOptions.Controls.Add(this.txtMoveDirectory);
             this.grpCleanupOptions.Location = new System.Drawing.Point(427, 0);
             this.grpCleanupOptions.Name = "grpCleanupOptions";
-            this.grpCleanupOptions.Size = new System.Drawing.Size(330, 159);
+            this.grpCleanupOptions.Size = new System.Drawing.Size(330, 140);
             this.grpCleanupOptions.TabIndex = 11;
             this.grpCleanupOptions.TabStop = false;
             this.grpCleanupOptions.Text = "Cleanup Options";
@@ -376,9 +378,20 @@
             this.pnlOptions.Controls.Add(this.grpCleanupOptions);
             this.pnlOptions.Location = new System.Drawing.Point(12, 59);
             this.pnlOptions.Name = "pnlOptions";
-            this.pnlOptions.Size = new System.Drawing.Size(760, 159);
+            this.pnlOptions.Size = new System.Drawing.Size(760, 143);
             this.pnlOptions.TabIndex = 12;
             this.pnlOptions.Resize += new System.EventHandler(this.PnlOptionsResize);
+            // 
+            // chkPreferHigherResolution
+            // 
+            this.chkPreferHigherResolution.AutoSize = true;
+            this.chkPreferHigherResolution.Location = new System.Drawing.Point(39, 69);
+            this.chkPreferHigherResolution.Name = "chkPreferHigherResolution";
+            this.chkPreferHigherResolution.Size = new System.Drawing.Size(146, 17);
+            this.chkPreferHigherResolution.TabIndex = 8;
+            this.chkPreferHigherResolution.Text = "Prefer Highest Resolution";
+            this.chkPreferHigherResolution.UseVisualStyleBackColor = true;
+            this.chkPreferHigherResolution.CheckedChanged += new System.EventHandler(this.ChkPreferHigherResolutionCheckedChanged);
             // 
             // MainForm
             // 
@@ -445,6 +458,7 @@
         private System.Windows.Forms.RadioButton radDelete;
         private System.Windows.Forms.RadioButton radPreview;
         private System.Windows.Forms.Panel pnlOptions;
+        private System.Windows.Forms.CheckBox chkPreferHigherResolution;
     }
 }
 
