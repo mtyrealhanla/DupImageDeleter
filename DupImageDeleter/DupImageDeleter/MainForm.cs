@@ -114,7 +114,7 @@ namespace DupImageDeleter
             this.txtImageDirectory.Text = Settings.Default.ImageDirectory;
             this.chkDeleteFilesWithSameName.Checked = Settings.Default.OptFilesWithSameName;
             this.txtExtension.Text = Settings.Default.OptExtensionToKeep;
-            this.chkMoveInsteadOfDelete.Checked = Settings.Default.OptMoveDuplicates;
+            this.radMove.Checked = Settings.Default.OptMoveDuplicates;
             this.txtMoveDirectory.Text = Settings.Default.MoveDirectory;
             this.chkHashCheck.Checked = Settings.Default.OptHashCheck;
             this.chkRequireLikeFileNames.Checked = Settings.Default.OptRequireLikeFileNames;
@@ -144,8 +144,8 @@ namespace DupImageDeleter
                 this.txtExtension.Text = null;
             }
 
-            this.txtMoveDirectory.Enabled = this.chkMoveInsteadOfDelete.Checked;
-            this.btnMoveDirectory.Enabled = this.chkMoveInsteadOfDelete.Checked;
+            this.txtMoveDirectory.Enabled = this.radMove.Checked;
+            this.btnMoveDirectory.Enabled = this.radMove.Checked;
 
             if (!this.txtMoveDirectory.Enabled)
             {
@@ -155,7 +155,7 @@ namespace DupImageDeleter
             this.chkRequireLikeFileNames.Enabled = this.chkHashCheck.Checked;
 
             this.btnGo.Enabled = !string.IsNullOrWhiteSpace(this.txtImageDirectory.Text)
-                                 && (!this.chkMoveInsteadOfDelete.Checked
+                                 && (!this.radMove.Checked
                                      || !string.IsNullOrWhiteSpace(this.txtMoveDirectory.Text))
                                  && (!this.chkDeleteFilesWithSameName.Checked
                                      || !string.IsNullOrWhiteSpace(this.txtExtension.Text));
@@ -194,8 +194,8 @@ namespace DupImageDeleter
             IProgress<GridOutputRow> gridProgress)
         {
             string extension = this.txtExtension.Text;
-            bool testMode = this.chkTestMode.Checked;
-            bool move = this.chkMoveInsteadOfDelete.Checked;
+            bool testMode = this.radPreview.Checked;
+            bool move = this.radMove.Checked;
             bool hash = this.chkHashCheck.Checked;
 
             outputProgress.Report($"Scanning Directory: {root.Name}");
@@ -249,7 +249,7 @@ namespace DupImageDeleter
                     continue;
                 }
 
-                string desc = (move ? "Move" : "Delete") + (testMode ? " (Test Mode)" : string.Empty);
+                string desc = (move ? "Move" : "Delete") + (testMode ? " (Preview)" : string.Empty);
 
                 outputProgress.Report($"{desc}: {file.FullName}");
                 gridProgress.Report(
@@ -509,19 +509,7 @@ namespace DupImageDeleter
             this.preventClose = false;
         }
 
-        /// <summary>
-        /// The chk move instead of delete_ checked changed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private void ChkMoveInsteadOfDeleteCheckedChanged(object sender, EventArgs e)
-        {
-            this.InitControls();
-        }
+
 
         /// <summary>
         /// The btn move directory_ click.
@@ -660,7 +648,7 @@ namespace DupImageDeleter
                 Settings.Default.ImageDirectory = this.txtImageDirectory.Text;
                 Settings.Default.OptFilesWithSameName = this.chkDeleteFilesWithSameName.Checked;
                 Settings.Default.OptExtensionToKeep = this.txtExtension.Text;
-                Settings.Default.OptMoveDuplicates = this.chkMoveInsteadOfDelete.Checked;
+                Settings.Default.OptMoveDuplicates = this.radMove.Checked;
                 Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
                 Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
                 Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
@@ -698,6 +686,42 @@ namespace DupImageDeleter
             this.InitControls();
 
             this.chkRequireLikeFileNames.Checked = this.chkHashCheck.Checked;
+        }
+
+        /// <summary>
+        /// The pnl options resize.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void PnlOptionsResize(object sender, EventArgs e)
+        {
+            this.grpOptions.Width = (int)(this.pnlOptions.Width * .55m);
+            this.grpOptions.Height = this.pnlOptions.Height;
+            this.grpOptions.Top = 0;
+            this.grpOptions.Left = 0;
+
+            this.grpCleanupOptions.Width = (int)(this.pnlOptions.Width * .45m);
+            this.grpCleanupOptions.Height = this.pnlOptions.Height;
+            this.grpCleanupOptions.Top = 0;
+            this.grpCleanupOptions.Left = this.grpOptions.Right + 6;
+        }
+
+        /// <summary>
+        /// The rad move checked changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void RadMoveCheckedChanged(object sender, EventArgs e)
+        {
+            this.InitControls();
         }
 
         /// <summary>
