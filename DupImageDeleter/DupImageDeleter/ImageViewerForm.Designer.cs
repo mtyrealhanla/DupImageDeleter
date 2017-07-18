@@ -31,10 +31,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.lblOriginal = new System.Windows.Forms.Label();
-            this.lblDuplicate = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblOriginal = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lblDuplicate = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -48,20 +48,22 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(280, 346);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.Size = new System.Drawing.Size(474, 518);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox2.Location = new System.Drawing.Point(0, 0);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(280, 346);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox2.Size = new System.Drawing.Size(470, 518);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
             // 
@@ -87,24 +89,6 @@
             this.splitContainer.SplitterDistance = 480;
             this.splitContainer.TabIndex = 2;
             // 
-            // lblOriginal
-            // 
-            this.lblOriginal.AutoSize = true;
-            this.lblOriginal.Location = new System.Drawing.Point(3, 0);
-            this.lblOriginal.Name = "lblOriginal";
-            this.lblOriginal.Size = new System.Drawing.Size(35, 13);
-            this.lblOriginal.TabIndex = 3;
-            this.lblOriginal.Text = "label1";
-            // 
-            // lblDuplicate
-            // 
-            this.lblDuplicate.AutoSize = true;
-            this.lblDuplicate.Location = new System.Drawing.Point(3, 0);
-            this.lblDuplicate.Name = "lblDuplicate";
-            this.lblDuplicate.Size = new System.Drawing.Size(35, 13);
-            this.lblDuplicate.TabIndex = 4;
-            this.lblDuplicate.Text = "label1";
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -117,6 +101,15 @@
             this.panel1.Size = new System.Drawing.Size(474, 518);
             this.panel1.TabIndex = 4;
             // 
+            // lblOriginal
+            // 
+            this.lblOriginal.AutoSize = true;
+            this.lblOriginal.Location = new System.Drawing.Point(3, 0);
+            this.lblOriginal.Name = "lblOriginal";
+            this.lblOriginal.Size = new System.Drawing.Size(35, 13);
+            this.lblOriginal.TabIndex = 3;
+            this.lblOriginal.Text = "label1";
+            // 
             // panel2
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -128,6 +121,15 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(470, 518);
             this.panel2.TabIndex = 5;
+            // 
+            // lblDuplicate
+            // 
+            this.lblDuplicate.AutoSize = true;
+            this.lblDuplicate.Location = new System.Drawing.Point(3, 0);
+            this.lblDuplicate.Name = "lblDuplicate";
+            this.lblDuplicate.Size = new System.Drawing.Size(35, 13);
+            this.lblDuplicate.TabIndex = 4;
+            this.lblDuplicate.Text = "label1";
             // 
             // ImageViewerForm
             // 
@@ -149,9 +151,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
         }

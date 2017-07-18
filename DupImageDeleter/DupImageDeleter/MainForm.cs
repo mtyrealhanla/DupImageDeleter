@@ -117,6 +117,7 @@ namespace DupImageDeleter
             this.txtMoveDirectory.Text = Settings.Default.MoveDirectory;
             this.chkHashCheck.Checked = Settings.Default.OptHashCheck;
             this.chkRequireLikeFileNames.Checked = Settings.Default.OptRequireLikeFileNames;
+            this.chkPreferHigherResolution.Checked = Settings.Default.PreferHighestResolution;
 
             this.fireInitControls = true;
 
@@ -233,9 +234,9 @@ namespace DupImageDeleter
                                           };
 
             List<FileAttribute> fileAttributes = (from f in files
-                                                  let fileNameWithoutExtension =
-                                                      Path.GetFileNameWithoutExtension(f.Name)
+                                                  let fileNameWithoutExtension = Path.GetFileNameWithoutExtension(f.Name)
                                                   where extensions.Contains(f.Extension)
+                                                  let resolution = this.GetResolution(f.FullName)
                                                   select
                                                       new FileAttribute
                                                           {
@@ -243,7 +244,8 @@ namespace DupImageDeleter
                                                               LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
                                                               FileNameWithoutExtension = fileNameWithoutExtension,
                                                               FileHash = hash ? GetHashFromFile(f.FullName) : string.Empty,
-                                                              Resolution = this.GetResolution(f.FullName)
+                                                              Vertical = resolution.Item2,
+                                                              Horizontal = resolution.Item1
                                                       }).ToList();
 
             List<FileAttributeOutput> filesToDelete = new List<FileAttributeOutput>();
@@ -274,7 +276,20 @@ namespace DupImageDeleter
                     continue;
                 }
 
-                string desc = (move ? "Move" : "Delete") + (testMode ? " (Preview)" : string.Empty);
+                string desc;
+
+                if (move)
+                {
+                    desc = "Move";
+                }
+                else if (testMode)
+                {
+                    desc = "Preview";
+                }
+                else
+                {
+                    desc = "Delete";
+                }
 
                 outputProgress.Report($"{desc}: {file.FullName}");
                 gridProgress.Report(
@@ -693,6 +708,7 @@ namespace DupImageDeleter
                 Settings.Default.MoveDirectory = this.txtMoveDirectory.Text;
                 Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
                 Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
+                Settings.Default.PreferHighestResolution = this.chkPreferHigherResolution.Checked;
 
                 Settings.Default.MainFormWindowState = this.WindowState;
 
@@ -759,10 +775,10 @@ namespace DupImageDeleter
             this.grpOptions.Top = 0;
             this.grpOptions.Left = 0;
 
-            this.grpCleanupOptions.Width = (int)(this.pnlOptions.Width * .45m);
+            this.grpCleanupOptions.Width = (int)(this.pnlOptions.Width * .44m);
             this.grpCleanupOptions.Height = this.pnlOptions.Height;
             this.grpCleanupOptions.Top = 0;
-            this.grpCleanupOptions.Left = this.grpOptions.Right + 6;
+            this.grpCleanupOptions.Left = this.grpOptions.Right + 5;
         }
 
         /// <summary>
@@ -786,24 +802,23 @@ namespace DupImageDeleter
         /// The file name.
         /// </param>
         /// <returns>
-        /// The <see cref="int"/>.
+        /// The <see cref="Tuple"/>.
         /// </returns>
-        private int GetResolution(string fileName)
+        private Tuple<int,int> GetResolution(string fileName)
         {
-            int resolution;
+            int width;
+            int height;
 
             using (FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
                 using (Image img = Image.FromStream(file, false, false))
                 {
-                    float width = img.PhysicalDimension.Width;
-                    float height = img.PhysicalDimension.Height;
-
-                    resolution = (int)(width * height);
+                    width = (int)img.PhysicalDimension.Width;
+                    height = (int)img.PhysicalDimension.Height;
                 }
             }
 
-            return resolution;
+            return new Tuple<int, int>(width, height);
         }
 
         /// <summary>

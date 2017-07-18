@@ -33,6 +33,7 @@
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkPreferHigherResolution = new System.Windows.Forms.CheckBox();
             this.chkRequireLikeFileNames = new System.Windows.Forms.CheckBox();
             this.chkHashCheck = new System.Windows.Forms.CheckBox();
             this.lblExtension = new System.Windows.Forms.Label();
@@ -53,13 +54,12 @@
             this.tabGrid = new System.Windows.Forms.TabPage();
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.progressBar = new DupImageDeleter.TextProgressBar();
             this.grpCleanupOptions = new System.Windows.Forms.GroupBox();
             this.radMove = new System.Windows.Forms.RadioButton();
             this.radDelete = new System.Windows.Forms.RadioButton();
             this.radPreview = new System.Windows.Forms.RadioButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
-            this.chkPreferHigherResolution = new System.Windows.Forms.CheckBox();
+            this.progressBar = new DupImageDeleter.TextProgressBar();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -115,6 +115,17 @@
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Search Options";
             // 
+            // chkPreferHigherResolution
+            // 
+            this.chkPreferHigherResolution.AutoSize = true;
+            this.chkPreferHigherResolution.Location = new System.Drawing.Point(39, 69);
+            this.chkPreferHigherResolution.Name = "chkPreferHigherResolution";
+            this.chkPreferHigherResolution.Size = new System.Drawing.Size(146, 17);
+            this.chkPreferHigherResolution.TabIndex = 8;
+            this.chkPreferHigherResolution.Text = "Prefer Highest Resolution";
+            this.chkPreferHigherResolution.UseVisualStyleBackColor = true;
+            this.chkPreferHigherResolution.CheckedChanged += new System.EventHandler(this.ChkPreferHigherResolutionCheckedChanged);
+            // 
             // chkRequireLikeFileNames
             // 
             this.chkRequireLikeFileNames.AutoSize = true;
@@ -167,7 +178,7 @@
             // btnMoveDirectory
             // 
             this.btnMoveDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveDirectory.Location = new System.Drawing.Point(296, 86);
+            this.btnMoveDirectory.Location = new System.Drawing.Point(299, 86);
             this.btnMoveDirectory.Name = "btnMoveDirectory";
             this.btnMoveDirectory.Size = new System.Drawing.Size(27, 23);
             this.btnMoveDirectory.TabIndex = 5;
@@ -182,7 +193,7 @@
             this.txtMoveDirectory.Location = new System.Drawing.Point(6, 88);
             this.txtMoveDirectory.Name = "txtMoveDirectory";
             this.txtMoveDirectory.ReadOnly = true;
-            this.txtMoveDirectory.Size = new System.Drawing.Size(284, 20);
+            this.txtMoveDirectory.Size = new System.Drawing.Size(287, 20);
             this.txtMoveDirectory.TabIndex = 4;
             this.txtMoveDirectory.TextChanged += new System.EventHandler(this.TxtMoveDirectoryTextChanged);
             // 
@@ -192,7 +203,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(746, 264);
+            this.txtOutput.Size = new System.Drawing.Size(746, 280);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -294,7 +305,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(752, 270);
+            this.tabOutput.Size = new System.Drawing.Size(752, 286);
             this.tabOutput.TabIndex = 1;
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
@@ -311,16 +322,6 @@
             this.txtImageDirectory.Text = global::DupImageDeleter.Properties.Settings.Default.ImageDirectory;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
-            // progressBar
-            // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.progressBar.Location = new System.Drawing.Point(12, 526);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(679, 23);
-            this.progressBar.TabIndex = 10;
-            // 
             // grpCleanupOptions
             // 
             this.grpCleanupOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -331,7 +332,7 @@
             this.grpCleanupOptions.Controls.Add(this.txtMoveDirectory);
             this.grpCleanupOptions.Location = new System.Drawing.Point(427, 0);
             this.grpCleanupOptions.Name = "grpCleanupOptions";
-            this.grpCleanupOptions.Size = new System.Drawing.Size(330, 140);
+            this.grpCleanupOptions.Size = new System.Drawing.Size(333, 140);
             this.grpCleanupOptions.TabIndex = 11;
             this.grpCleanupOptions.TabStop = false;
             this.grpCleanupOptions.Text = "Cleanup Options";
@@ -382,16 +383,15 @@
             this.pnlOptions.TabIndex = 12;
             this.pnlOptions.Resize += new System.EventHandler(this.PnlOptionsResize);
             // 
-            // chkPreferHigherResolution
+            // progressBar
             // 
-            this.chkPreferHigherResolution.AutoSize = true;
-            this.chkPreferHigherResolution.Location = new System.Drawing.Point(39, 69);
-            this.chkPreferHigherResolution.Name = "chkPreferHigherResolution";
-            this.chkPreferHigherResolution.Size = new System.Drawing.Size(146, 17);
-            this.chkPreferHigherResolution.TabIndex = 8;
-            this.chkPreferHigherResolution.Text = "Prefer Highest Resolution";
-            this.chkPreferHigherResolution.UseVisualStyleBackColor = true;
-            this.chkPreferHigherResolution.CheckedChanged += new System.EventHandler(this.ChkPreferHigherResolutionCheckedChanged);
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.progressBar.Location = new System.Drawing.Point(12, 526);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(679, 23);
+            this.progressBar.TabIndex = 10;
             // 
             // MainForm
             // 
