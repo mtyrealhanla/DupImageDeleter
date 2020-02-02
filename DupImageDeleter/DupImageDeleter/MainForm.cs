@@ -118,6 +118,8 @@ namespace DupImageDeleter
             this.chkHashCheck.Checked = Settings.Default.OptHashCheck;
             this.chkRequireLikeFileNames.Checked = Settings.Default.OptRequireLikeFileNames;
             this.chkPreferHigherResolution.Checked = Settings.Default.PreferHighestResolution;
+            this.chkSearchTopDirectoriesOnly.Checked = Settings.Default.OptSearchTopDirectoriesOnly;
+            this.chkLikeFileNames.Checked = Settings.Default.OptLikeFileNames;
 
             this.fireInitControls = true;
 
@@ -202,6 +204,7 @@ namespace DupImageDeleter
             string extension = this.txtExtension.Text;
             bool testMode = this.radPreview.Checked;
             bool move = this.radMove.Checked;
+            bool moveToNA = this.radMoveToUS.Checked;
             bool hash = this.chkHashCheck.Checked;
 
             outputProgress.Report($"Scanning Directory: {root.Name}");
@@ -210,7 +213,7 @@ namespace DupImageDeleter
 
             try
             {
-                files = root.GetFiles("*.*");
+                files = root.GetFiles("*.*", SearchOption.TopDirectoryOnly);
             }
             catch (Exception e)
             {
@@ -240,6 +243,7 @@ namespace DupImageDeleter
                                                   select
                                                       new FileAttribute
                                                           {
+                                                              Directory = f.Directory.FullName,
                                                               FileInfo = f,
                                                               LikeFileName = this.GetLikeFileName(fileNameWithoutExtension),
                                                               FileNameWithoutExtension = fileNameWithoutExtension,
@@ -267,6 +271,16 @@ namespace DupImageDeleter
                 this.DeleteFilesWithHashCheck(fileAttributes, filesToDelete);
             }
 
+            if (this.chkLikeFileNames.Checked)
+            {
+                this.DeleteFilesWithLikeFileNames(fileAttributes, filesToDelete);
+            }
+
+            if(moveToNA)
+            {
+                this.DeleteAll(fileAttributes, filesToDelete);
+            }
+
             foreach (FileAttributeOutput fileToDelete in filesToDelete)
             {
                 FileInfo file = fileToDelete?.FileToDelete.FileInfo;
@@ -282,6 +296,10 @@ namespace DupImageDeleter
                 {
                     desc = "Move";
                 }
+                else if(moveToNA)
+                {
+                    desc = "Move to NA";
+                }
                 else if (testMode)
                 {
                     desc = "Preview";
@@ -296,10 +314,11 @@ namespace DupImageDeleter
                     new GridOutputRow
                         {
                             Action = desc,
-                            Folder = fileToDelete.FileToDelete.FileInfo.DirectoryName,
+                            OriginalFolder = fileToDelete.OriginalFile.FileInfo.DirectoryName,
                             OriginalFile = fileToDelete.OriginalFile.FileInfo.Name,
+                            DuplicateFolder = fileToDelete.FileToDelete.FileInfo.DirectoryName,
                             DuplicateFile = fileToDelete.FileToDelete.FileInfo.Name
-                        });
+                    });
 
                 if (testMode)
                 {
@@ -323,6 +342,17 @@ namespace DupImageDeleter
 
                             file.MoveTo(newDirectory + @"\" + file.Name);
                         }
+                    }
+                    else if (moveToNA)
+                    {
+                        string newDirectory = fileToDelete.OriginalFile.Directory + @"\United States";
+
+                        if (!Directory.Exists(newDirectory))
+                        {
+                            Directory.CreateDirectory(newDirectory);
+                        }
+
+                        file.MoveTo(newDirectory + @"\" + file.Name);
                     }
                     else
                     {
@@ -364,6 +394,32 @@ namespace DupImageDeleter
                         original =>
                         fileAttributes.Where(x => this.CompareString(x.FileHash, original.FileHash) && x != original)
                             .Select(y => 
+                                new FileAttributeOutput
+                                {
+                                    OriginalFile = original,
+                                    FileToDelete = y
+                                })));
+
+            fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
+        }
+
+        private void DeleteFilesWithLikeFileNames(
+            List<FileAttribute> fileAttributes,
+            List<FileAttributeOutput> filesToDelete)
+        {
+            filesToDelete.AddRange(
+                fileAttributes.GroupBy(f => new { LikeFileName = f.LikeFileName })
+                    .Where(group => group.Count() > 1)
+                    .Select(
+                        group => group
+                            .OrderBy(x => x.FileInfo.CreationTimeUtc)
+                            .ThenBy(x => x.FileInfo.Name)
+                            .Take(1)
+                            .Single())
+                    .SelectMany(
+                        original =>
+                        fileAttributes.Where(x => this.CompareString(x.LikeFileName, original.LikeFileName) && x != original)
+                            .Select(y =>
                                 new FileAttributeOutput
                                 {
                                     OriginalFile = original,
@@ -425,13 +481,19 @@ namespace DupImageDeleter
         {
             filesToDelete.AddRange(
                 fileAttributes.GroupBy(f => f.FileNameWithoutExtension).Where(group => group.Count() > 1)
-                    .Select(group => group.Single(x => this.CompareString(x.FileInfo.Extension, $".{extension}")))
+                    .Where(group => group.Any(x => this.CompareString(x.FileInfo.Extension, $".{extension}")))
+                    .Select(group => group.First(x => this.CompareString(x.FileInfo.Extension, $".{extension}")))
                     .SelectMany(
                         original => fileAttributes
                             .Where(x => this.CompareString(x.FileNameWithoutExtension, original.FileNameWithoutExtension) && x != original)
                             .Select(x => new FileAttributeOutput { OriginalFile = original, FileToDelete = x })));
 
             fileAttributes.RemoveAll(x => filesToDelete.Select(y => y.FileToDelete).ToList().Contains(x));
+        }
+
+        private void DeleteAll(List<FileAttribute> fileAttributes, List<FileAttributeOutput> filesToDelete)
+        {
+            filesToDelete.AddRange(fileAttributes.Select(x => new FileAttributeOutput { OriginalFile = x, FileToDelete = x }));
         }
 
         /// <summary>
@@ -503,7 +565,7 @@ namespace DupImageDeleter
             Progress<GridOutputRow> gridProgressHandler = new Progress<GridOutputRow>(
                 value =>
                     {
-                        this.grdOutput.Rows.Add(value.Action, value.Folder, value.OriginalFile, value.DuplicateFile);
+                        this.grdOutput.Rows.Add(value.Action, value.OriginalFolder, value.OriginalFile, value.DuplicateFolder, value.DuplicateFile);
                         this.grdOutput.Refresh();
                     });
 
@@ -527,7 +589,9 @@ namespace DupImageDeleter
             this.btnGo.Enabled = false;
             this.btnDirectorySelector.Enabled = false;
 
-            List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", SearchOption.AllDirectories).Where(x => !this.CompareString(x.Name, "Cache")).ToList();
+            var searchOption = this.chkSearchTopDirectoriesOnly.Checked ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+
+            List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", searchOption).Where(x => !this.CompareString(x.Name, "Cache")).ToList();
             allDirectoryInfos.Insert(0, root);
 
             this.progressBar.Minimum = 0;
@@ -709,6 +773,8 @@ namespace DupImageDeleter
                 Settings.Default.OptHashCheck = this.chkHashCheck.Checked;
                 Settings.Default.OptRequireLikeFileNames = this.chkRequireLikeFileNames.Checked;
                 Settings.Default.PreferHighestResolution = this.chkPreferHigherResolution.Checked;
+                Settings.Default.OptSearchTopDirectoriesOnly = this.chkSearchTopDirectoriesOnly.Checked;
+                Settings.Default.OptLikeFileNames = this.chkLikeFileNames.Checked;
 
                 Settings.Default.MainFormWindowState = this.WindowState;
 
@@ -834,12 +900,17 @@ namespace DupImageDeleter
             /// <summary>
             /// Gets or sets the folder.
             /// </summary>
-            public string Folder { get; set; }
+            public string OriginalFolder { get; set; }
 
             /// <summary>
             /// Gets or sets the original file.
             /// </summary>
             public string OriginalFile { get; set; }
+
+            /// <summary>
+            /// Gets or sets the duplicate folder.
+            /// </summary>
+            public string DuplicateFolder { get; set; }
 
             /// <summary>
             /// Gets or sets the duplicate file.

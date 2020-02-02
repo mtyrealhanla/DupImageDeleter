@@ -50,5 +50,10 @@ namespace DupImageDeleter
         /// Gets or sets the vertical.
         /// </summary>
         public int Vertical { get; set; }
+
+        /// <summary>
+        /// Gets or sets the directory.
+        /// </summary>
+        public string Directory { get; set; }
     }
 }
