@@ -745,9 +745,7 @@ namespace DupImageDeleter
                 ImageViewerForm viewer = new ImageViewerForm
                                              {
                                                  OriginalImagePath = folder + @"\" + originalImage,
-                                                 DupImagePath = folder + @"\" + dupImage,
-                                                 Parent = this,
-                                                 TopLevel = false
+                                                 DupImagePath = folder + @"\" + dupImage
                                              };
                 viewer.ShowDialog(this);
                 viewer.FormClosed += (s1, e1) => 
