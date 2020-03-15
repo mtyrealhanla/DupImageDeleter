@@ -33,6 +33,7 @@
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkLikeFileNames = new System.Windows.Forms.CheckBox();
             this.chkSearchTopDirectoriesOnly = new System.Windows.Forms.CheckBox();
             this.chkPreferHigherResolution = new System.Windows.Forms.CheckBox();
             this.chkRequireLikeFileNames = new System.Windows.Forms.CheckBox();
@@ -56,14 +57,14 @@
             this.tabGrid = new System.Windows.Forms.TabPage();
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.grpCleanupOptions = new System.Windows.Forms.GroupBox();
+            this.radMoveToUS = new System.Windows.Forms.RadioButton();
             this.radMove = new System.Windows.Forms.RadioButton();
             this.radDelete = new System.Windows.Forms.RadioButton();
             this.radPreview = new System.Windows.Forms.RadioButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
-            this.radMoveToUS = new System.Windows.Forms.RadioButton();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.chkLikeFileNames = new System.Windows.Forms.CheckBox();
             this.progressBar = new DupImageDeleter.TextProgressBar();
+            this.chkExcludeGameplay = new System.Windows.Forms.CheckBox();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -76,7 +77,7 @@
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(697, 526);
+            this.btnGo.Location = new System.Drawing.Point(857, 633);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(75, 23);
             this.btnGo.TabIndex = 5;
@@ -96,7 +97,7 @@
             // btnDirectorySelector
             // 
             this.btnDirectorySelector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDirectorySelector.Location = new System.Drawing.Point(745, 30);
+            this.btnDirectorySelector.Location = new System.Drawing.Point(905, 30);
             this.btnDirectorySelector.Name = "btnDirectorySelector";
             this.btnDirectorySelector.Size = new System.Drawing.Size(27, 23);
             this.btnDirectorySelector.TabIndex = 2;
@@ -106,6 +107,7 @@
             // 
             // grpOptions
             // 
+            this.grpOptions.Controls.Add(this.chkExcludeGameplay);
             this.grpOptions.Controls.Add(this.chkLikeFileNames);
             this.grpOptions.Controls.Add(this.chkSearchTopDirectoriesOnly);
             this.grpOptions.Controls.Add(this.chkPreferHigherResolution);
@@ -116,10 +118,20 @@
             this.grpOptions.Controls.Add(this.chkDeleteFilesWithSameName);
             this.grpOptions.Location = new System.Drawing.Point(0, 0);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(421, 160);
+            this.grpOptions.Size = new System.Drawing.Size(581, 184);
             this.grpOptions.TabIndex = 0;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Search Options";
+            // 
+            // chkLikeFileNames
+            // 
+            this.chkLikeFileNames.AutoSize = true;
+            this.chkLikeFileNames.Location = new System.Drawing.Point(6, 112);
+            this.chkLikeFileNames.Name = "chkLikeFileNames";
+            this.chkLikeFileNames.Size = new System.Drawing.Size(203, 17);
+            this.chkLikeFileNames.TabIndex = 6;
+            this.chkLikeFileNames.Text = "LIke File Names (Game-01, Game-02)";
+            this.chkLikeFileNames.UseVisualStyleBackColor = true;
             // 
             // chkSearchTopDirectoriesOnly
             // 
@@ -127,7 +139,7 @@
             this.chkSearchTopDirectoriesOnly.Location = new System.Drawing.Point(6, 135);
             this.chkSearchTopDirectoriesOnly.Name = "chkSearchTopDirectoriesOnly";
             this.chkSearchTopDirectoriesOnly.Size = new System.Drawing.Size(159, 17);
-            this.chkSearchTopDirectoriesOnly.TabIndex = 6;
+            this.chkSearchTopDirectoriesOnly.TabIndex = 7;
             this.chkSearchTopDirectoriesOnly.Text = "Search Top Directories Only";
             this.chkSearchTopDirectoriesOnly.UseVisualStyleBackColor = true;
             // 
@@ -242,7 +254,7 @@
             this.grdOutput.Location = new System.Drawing.Point(3, 3);
             this.grdOutput.Name = "grdOutput";
             this.grdOutput.ReadOnly = true;
-            this.grdOutput.Size = new System.Drawing.Size(746, 259);
+            this.grdOutput.Size = new System.Drawing.Size(906, 343);
             this.grdOutput.TabIndex = 0;
             this.grdOutput.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GrdOutputCellContentClick);
             // 
@@ -306,10 +318,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabGrid);
             this.tabControl1.Controls.Add(this.tabOutput);
-            this.tabControl1.Location = new System.Drawing.Point(12, 229);
+            this.tabControl1.Location = new System.Drawing.Point(12, 252);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(760, 291);
+            this.tabControl1.Size = new System.Drawing.Size(920, 375);
             this.tabControl1.TabIndex = 3;
             // 
             // tabGrid
@@ -318,7 +330,7 @@
             this.tabGrid.Location = new System.Drawing.Point(4, 22);
             this.tabGrid.Name = "tabGrid";
             this.tabGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGrid.Size = new System.Drawing.Size(752, 265);
+            this.tabGrid.Size = new System.Drawing.Size(912, 349);
             this.tabGrid.TabIndex = 0;
             this.tabGrid.Text = "Grid";
             this.tabGrid.UseVisualStyleBackColor = true;
@@ -343,12 +355,22 @@
             this.grpCleanupOptions.Controls.Add(this.btnMoveDirectory);
             this.grpCleanupOptions.Controls.Add(this.radPreview);
             this.grpCleanupOptions.Controls.Add(this.txtMoveDirectory);
-            this.grpCleanupOptions.Location = new System.Drawing.Point(427, 0);
+            this.grpCleanupOptions.Location = new System.Drawing.Point(587, 0);
             this.grpCleanupOptions.Name = "grpCleanupOptions";
-            this.grpCleanupOptions.Size = new System.Drawing.Size(333, 160);
+            this.grpCleanupOptions.Size = new System.Drawing.Size(333, 184);
             this.grpCleanupOptions.TabIndex = 1;
             this.grpCleanupOptions.TabStop = false;
             this.grpCleanupOptions.Text = "Cleanup Options";
+            // 
+            // radMoveToUS
+            // 
+            this.radMoveToUS.AutoSize = true;
+            this.radMoveToUS.Location = new System.Drawing.Point(6, 114);
+            this.radMoveToUS.Name = "radMoveToUS";
+            this.radMoveToUS.Size = new System.Drawing.Size(82, 17);
+            this.radMoveToUS.TabIndex = 5;
+            this.radMoveToUS.Text = "Move to US";
+            this.radMoveToUS.UseVisualStyleBackColor = true;
             // 
             // radMove
             // 
@@ -392,19 +414,9 @@
             this.pnlOptions.Controls.Add(this.grpCleanupOptions);
             this.pnlOptions.Location = new System.Drawing.Point(12, 59);
             this.pnlOptions.Name = "pnlOptions";
-            this.pnlOptions.Size = new System.Drawing.Size(760, 164);
+            this.pnlOptions.Size = new System.Drawing.Size(920, 187);
             this.pnlOptions.TabIndex = 12;
             this.pnlOptions.Resize += new System.EventHandler(this.PnlOptionsResize);
-            // 
-            // radMoveToUS
-            // 
-            this.radMoveToUS.AutoSize = true;
-            this.radMoveToUS.Location = new System.Drawing.Point(6, 114);
-            this.radMoveToUS.Name = "radMoveToUS";
-            this.radMoveToUS.Size = new System.Drawing.Size(82, 17);
-            this.radMoveToUS.TabIndex = 5;
-            this.radMoveToUS.Text = "Move to US";
-            this.radMoveToUS.UseVisualStyleBackColor = true;
             // 
             // txtImageDirectory
             // 
@@ -413,36 +425,36 @@
             this.txtImageDirectory.Location = new System.Drawing.Point(15, 32);
             this.txtImageDirectory.Name = "txtImageDirectory";
             this.txtImageDirectory.ReadOnly = true;
-            this.txtImageDirectory.Size = new System.Drawing.Size(724, 20);
+            this.txtImageDirectory.Size = new System.Drawing.Size(884, 20);
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
-            // 
-            // chkLikeFileNames
-            // 
-            this.chkLikeFileNames.AutoSize = true;
-            this.chkLikeFileNames.Location = new System.Drawing.Point(6, 112);
-            this.chkLikeFileNames.Name = "chkLikeFileNames";
-            this.chkLikeFileNames.Size = new System.Drawing.Size(203, 17);
-            this.chkLikeFileNames.TabIndex = 7;
-            this.chkLikeFileNames.Text = "LIke File Names (Game-01, Game-02)";
-            this.chkLikeFileNames.UseVisualStyleBackColor = true;
             // 
             // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.progressBar.Location = new System.Drawing.Point(12, 526);
+            this.progressBar.Location = new System.Drawing.Point(12, 633);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(679, 23);
+            this.progressBar.Size = new System.Drawing.Size(839, 23);
             this.progressBar.TabIndex = 4;
+            // 
+            // chkExcludeGameplay
+            // 
+            this.chkExcludeGameplay.AutoSize = true;
+            this.chkExcludeGameplay.Location = new System.Drawing.Point(6, 158);
+            this.chkExcludeGameplay.Name = "chkExcludeGameplay";
+            this.chkExcludeGameplay.Size = new System.Drawing.Size(182, 17);
+            this.chkExcludeGameplay.TabIndex = 8;
+            this.chkExcludeGameplay.Text = "Exclude Screenshots - Gameplay";
+            this.chkExcludeGameplay.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AcceptButton = this.btnGo;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(944, 668);
             this.Controls.Add(this.pnlOptions);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.tabControl1);
@@ -507,6 +519,7 @@
         private System.Windows.Forms.DataGridViewButtonColumn ViewImages;
         private System.Windows.Forms.RadioButton radMoveToUS;
         private System.Windows.Forms.CheckBox chkLikeFileNames;
+        private System.Windows.Forms.CheckBox chkExcludeGameplay;
     }
 }
 

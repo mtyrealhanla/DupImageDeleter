@@ -9,6 +9,7 @@
 namespace DupImageDeleter
 {
     using System;
+    using System.IO;
     using System.Windows.Forms;
 
     /// <summary>
@@ -34,6 +35,8 @@ namespace DupImageDeleter
         /// </summary>
         public string DupImagePath { get; set; }
 
+        public bool DeleteRow { get; private set; }
+
         /// <summary>
         /// The image viewer form_ load.
         /// </summary>
@@ -50,6 +53,22 @@ namespace DupImageDeleter
 
             this.lblOriginal.Text = $"Original Image: {this.pictureBox1.ImageLocation}";
             this.lblDuplicate.Text = $"Duplicate Image: { this.pictureBox2.ImageLocation}";
+        }
+
+        private void btnDeleteLeft_Click(object sender, EventArgs e)
+        {
+            FileInfo f = new FileInfo(this.pictureBox1.ImageLocation);
+            f.Delete();
+            this.DeleteRow = true;
+            this.Close();
+        }
+
+        private void btnDeleteRight_Click(object sender, EventArgs e)
+        {
+            FileInfo f = new FileInfo(this.pictureBox2.ImageLocation);
+            f.Delete();
+            this.DeleteRow = true;
+            this.Close();
         }
     }
 }

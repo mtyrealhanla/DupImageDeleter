@@ -178,5 +178,17 @@ namespace DupImageDeleter.Properties {
                 this["OptLikeFileNames"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OptExcludeScreenshotsGameplay {
+            get {
+                return ((bool)(this["OptExcludeScreenshotsGameplay"]));
+            }
+            set {
+                this["OptExcludeScreenshotsGameplay"] = value;
+            }
+        }
     }
 }

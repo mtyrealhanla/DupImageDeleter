@@ -120,6 +120,7 @@ namespace DupImageDeleter
             this.chkPreferHigherResolution.Checked = Settings.Default.PreferHighestResolution;
             this.chkSearchTopDirectoriesOnly.Checked = Settings.Default.OptSearchTopDirectoriesOnly;
             this.chkLikeFileNames.Checked = Settings.Default.OptLikeFileNames;
+            this.chkExcludeGameplay.Checked = Settings.Default.OptExcludeScreenshotsGameplay;
 
             this.fireInitControls = true;
 
@@ -591,7 +592,11 @@ namespace DupImageDeleter
 
             var searchOption = this.chkSearchTopDirectoriesOnly.Checked ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
 
-            List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", searchOption).Where(x => !this.CompareString(x.Name, "Cache")).ToList();
+            List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", searchOption)
+                .Where(x => !this.CompareString(x.Name, "Cache"))
+                .Where(x => !this.chkExcludeGameplay.Checked || !x.FullName.Contains("Screenshot - Gameplay"))
+                .ToList();
+
             allDirectoryInfos.Insert(0, root);
 
             this.progressBar.Minimum = 0;
@@ -741,9 +746,17 @@ namespace DupImageDeleter
                                              {
                                                  OriginalImagePath = folder + @"\" + originalImage,
                                                  DupImagePath = folder + @"\" + dupImage,
-                                                 Owner = this
+                                                 Parent = this,
+                                                 TopLevel = false
                                              };
-                viewer.Show();
+                viewer.ShowDialog(this);
+                viewer.FormClosed += (s1, e1) => 
+                { 
+                    if(viewer.DeleteRow)
+                    {
+                        grdOutput.Rows.Remove(grdOutput.Rows[e.RowIndex]);
+                    }
+                };
             }
         }
 
@@ -775,6 +788,7 @@ namespace DupImageDeleter
                 Settings.Default.PreferHighestResolution = this.chkPreferHigherResolution.Checked;
                 Settings.Default.OptSearchTopDirectoriesOnly = this.chkSearchTopDirectoriesOnly.Checked;
                 Settings.Default.OptLikeFileNames = this.chkLikeFileNames.Checked;
+                Settings.Default.OptExcludeScreenshotsGameplay = this.chkExcludeGameplay.Checked;
 
                 Settings.Default.MainFormWindowState = this.WindowState;
 

@@ -35,6 +35,8 @@
             this.lblOriginal = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.lblDuplicate = new System.Windows.Forms.Label();
+            this.btnDeleteLeft = new System.Windows.Forms.Button();
+            this.btnDeleteRight = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -51,7 +53,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(474, 518);
+            this.pictureBox1.Size = new System.Drawing.Size(746, 715);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -62,7 +64,7 @@
             this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox2.Location = new System.Drawing.Point(0, 0);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(470, 518);
+            this.pictureBox2.Size = new System.Drawing.Size(743, 715);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
@@ -85,8 +87,8 @@
             // 
             this.splitContainer.Panel2.Controls.Add(this.panel2);
             this.splitContainer.Panel2.Controls.Add(this.lblDuplicate);
-            this.splitContainer.Size = new System.Drawing.Size(960, 537);
-            this.splitContainer.SplitterDistance = 480;
+            this.splitContainer.Size = new System.Drawing.Size(1505, 734);
+            this.splitContainer.SplitterDistance = 752;
             this.splitContainer.TabIndex = 2;
             // 
             // panel1
@@ -98,7 +100,7 @@
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(3, 16);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(474, 518);
+            this.panel1.Size = new System.Drawing.Size(746, 715);
             this.panel1.TabIndex = 4;
             // 
             // lblOriginal
@@ -119,7 +121,7 @@
             this.panel2.Controls.Add(this.pictureBox2);
             this.panel2.Location = new System.Drawing.Point(3, 16);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(470, 518);
+            this.panel2.Size = new System.Drawing.Size(743, 715);
             this.panel2.TabIndex = 5;
             // 
             // lblDuplicate
@@ -131,11 +133,35 @@
             this.lblDuplicate.TabIndex = 4;
             this.lblDuplicate.Text = "label1";
             // 
+            // btnDeleteLeft
+            // 
+            this.btnDeleteLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDeleteLeft.Location = new System.Drawing.Point(13, 752);
+            this.btnDeleteLeft.Name = "btnDeleteLeft";
+            this.btnDeleteLeft.Size = new System.Drawing.Size(748, 30);
+            this.btnDeleteLeft.TabIndex = 3;
+            this.btnDeleteLeft.Text = "Delete Left Image";
+            this.btnDeleteLeft.UseVisualStyleBackColor = true;
+            this.btnDeleteLeft.Click += new System.EventHandler(this.btnDeleteLeft_Click);
+            // 
+            // btnDeleteRight
+            // 
+            this.btnDeleteRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteRight.Location = new System.Drawing.Point(771, 752);
+            this.btnDeleteRight.Name = "btnDeleteRight";
+            this.btnDeleteRight.Size = new System.Drawing.Size(746, 29);
+            this.btnDeleteRight.TabIndex = 4;
+            this.btnDeleteRight.Text = "Delete Right Image";
+            this.btnDeleteRight.UseVisualStyleBackColor = true;
+            this.btnDeleteRight.Click += new System.EventHandler(this.btnDeleteRight_Click);
+            // 
             // ImageViewerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 561);
+            this.ClientSize = new System.Drawing.Size(1529, 794);
+            this.Controls.Add(this.btnDeleteRight);
+            this.Controls.Add(this.btnDeleteLeft);
             this.Controls.Add(this.splitContainer);
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "ImageViewerForm";
@@ -165,5 +191,7 @@
         private System.Windows.Forms.Label lblDuplicate;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button btnDeleteLeft;
+        private System.Windows.Forms.Button btnDeleteRight;
     }
 }
