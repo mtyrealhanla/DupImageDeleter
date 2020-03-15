@@ -35,8 +35,6 @@ namespace DupImageDeleter
         /// </summary>
         public string DupImagePath { get; set; }
 
-        public bool DeleteRow { get; private set; }
-
         /// <summary>
         /// The image viewer form_ load.
         /// </summary>
@@ -59,7 +57,7 @@ namespace DupImageDeleter
         {
             FileInfo f = new FileInfo(this.pictureBox1.ImageLocation);
             f.Delete();
-            this.DeleteRow = true;
+            this.DialogResult = DialogResult.Abort;
             this.Close();
         }
 
@@ -67,7 +65,7 @@ namespace DupImageDeleter
         {
             FileInfo f = new FileInfo(this.pictureBox2.ImageLocation);
             f.Delete();
-            this.DeleteRow = true;
+            this.DialogResult = DialogResult.Abort;
             this.Close();
         }
     }

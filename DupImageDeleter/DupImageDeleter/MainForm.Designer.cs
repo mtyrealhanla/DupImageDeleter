@@ -63,8 +63,8 @@
             this.radPreview = new System.Windows.Forms.RadioButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.progressBar = new DupImageDeleter.TextProgressBar();
             this.chkExcludeGameplay = new System.Windows.Forms.CheckBox();
+            this.progressBar = new DupImageDeleter.TextProgressBar();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -231,7 +231,7 @@
             this.txtOutput.Location = new System.Drawing.Point(3, 3);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
-            this.txtOutput.Size = new System.Drawing.Size(746, 259);
+            this.txtOutput.Size = new System.Drawing.Size(906, 343);
             this.txtOutput.TabIndex = 4;
             this.txtOutput.Text = "";
             // 
@@ -341,7 +341,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(752, 265);
+            this.tabOutput.Size = new System.Drawing.Size(912, 349);
             this.tabOutput.TabIndex = 1;
             this.tabOutput.Text = "Output";
             this.tabOutput.UseVisualStyleBackColor = true;
@@ -429,6 +429,16 @@
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
+            // chkExcludeGameplay
+            // 
+            this.chkExcludeGameplay.AutoSize = true;
+            this.chkExcludeGameplay.Location = new System.Drawing.Point(6, 158);
+            this.chkExcludeGameplay.Name = "chkExcludeGameplay";
+            this.chkExcludeGameplay.Size = new System.Drawing.Size(155, 17);
+            this.chkExcludeGameplay.TabIndex = 8;
+            this.chkExcludeGameplay.Text = "Exclude Gameplay / Fanart";
+            this.chkExcludeGameplay.UseVisualStyleBackColor = true;
+            // 
             // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -438,16 +448,6 @@
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(839, 23);
             this.progressBar.TabIndex = 4;
-            // 
-            // chkExcludeGameplay
-            // 
-            this.chkExcludeGameplay.AutoSize = true;
-            this.chkExcludeGameplay.Location = new System.Drawing.Point(6, 158);
-            this.chkExcludeGameplay.Name = "chkExcludeGameplay";
-            this.chkExcludeGameplay.Size = new System.Drawing.Size(182, 17);
-            this.chkExcludeGameplay.TabIndex = 8;
-            this.chkExcludeGameplay.Text = "Exclude Screenshots - Gameplay";
-            this.chkExcludeGameplay.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 

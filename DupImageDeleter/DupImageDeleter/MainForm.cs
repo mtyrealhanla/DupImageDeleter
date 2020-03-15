@@ -197,10 +197,9 @@ namespace DupImageDeleter
             return fileName.Trim();
         }
 
-        private void WalkDirectoryTree(
+        private IEnumerable<FileAttributeOutput> WalkDirectoryTree(
             DirectoryInfo root,
-            IProgress<string> outputProgress,
-            IProgress<GridOutputRow> gridProgress)
+            IProgress<string> outputProgress)
         {
             string extension = this.txtExtension.Text;
             bool testMode = this.radPreview.Checked;
@@ -223,7 +222,7 @@ namespace DupImageDeleter
 
             if (files == null)
             {
-                return;
+                return Enumerable.Empty<FileAttributeOutput>();
             }
 
             List<string> extensions = new List<string>
@@ -282,6 +281,18 @@ namespace DupImageDeleter
                 this.DeleteAll(fileAttributes, filesToDelete);
             }
 
+            return filesToDelete;
+        }
+
+        private void AddFilesToDeleteToGrid(
+            IEnumerable<FileAttributeOutput> filesToDelete,
+            IProgress<string> outputProgress,
+            IProgress<GridOutputRow> gridProgress)
+        {
+            bool testMode = this.radPreview.Checked;
+            bool move = this.radMove.Checked;
+            bool moveToNA = this.radMoveToUS.Checked;
+
             foreach (FileAttributeOutput fileToDelete in filesToDelete)
             {
                 FileInfo file = fileToDelete?.FileToDelete.FileInfo;
@@ -297,7 +308,7 @@ namespace DupImageDeleter
                 {
                     desc = "Move";
                 }
-                else if(moveToNA)
+                else if (moveToNA)
                 {
                     desc = "Move to NA";
                 }
@@ -313,12 +324,12 @@ namespace DupImageDeleter
                 outputProgress.Report($"{desc}: {file.FullName}");
                 gridProgress.Report(
                     new GridOutputRow
-                        {
-                            Action = desc,
-                            OriginalFolder = fileToDelete.OriginalFile.FileInfo.DirectoryName,
-                            OriginalFile = fileToDelete.OriginalFile.FileInfo.Name,
-                            DuplicateFolder = fileToDelete.FileToDelete.FileInfo.DirectoryName,
-                            DuplicateFile = fileToDelete.FileToDelete.FileInfo.Name
+                    {
+                        Action = desc,
+                        OriginalFolder = fileToDelete.OriginalFile.FileInfo.DirectoryName,
+                        OriginalFile = fileToDelete.OriginalFile.FileInfo.Name,
+                        DuplicateFolder = fileToDelete.FileToDelete.FileInfo.DirectoryName,
+                        DuplicateFile = fileToDelete.FileToDelete.FileInfo.Name
                     });
 
                 if (testMode)
@@ -567,7 +578,6 @@ namespace DupImageDeleter
                 value =>
                     {
                         this.grdOutput.Rows.Add(value.Action, value.OriginalFolder, value.OriginalFile, value.DuplicateFolder, value.DuplicateFile);
-                        this.grdOutput.Refresh();
                     });
 
             Progress<string> progressBarProgressHandler = new Progress<string>(
@@ -594,7 +604,7 @@ namespace DupImageDeleter
 
             List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", searchOption)
                 .Where(x => !this.CompareString(x.Name, "Cache"))
-                .Where(x => !this.chkExcludeGameplay.Checked || !x.FullName.Contains("Screenshot - Gameplay"))
+                .Where(x => !this.chkExcludeGameplay.Checked || (!x.FullName.Contains("Screenshot - Gameplay") && !x.FullName.Contains("Fanart - ")))
                 .ToList();
 
             allDirectoryInfos.Insert(0, root);
@@ -603,28 +613,25 @@ namespace DupImageDeleter
             this.progressBar.Maximum = allDirectoryInfos.Count;
             this.progressBar.Step = 1;
 
-            await Task.Run(
-                () =>
-                    {
-                        try
-                        {
-                            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
 
-                            foreach (DirectoryInfo directoryInfo in allDirectoryInfos)
-                            {
-                                progressBarProgress.Report(directoryInfo.FullName);
+                var filesToDelete = await Task.WhenAll(allDirectoryInfos.Select(directoryInfo => Task.Run(() =>
+                {
+                    progressBarProgress.Report(directoryInfo.FullName);
 
-                                this.WalkDirectoryTree(
-                                    directoryInfo,
-                                    outputProgress,
-                                    gridProgress);
-                            }
-                        }
-                        finally
-                        {
-                            Cursor.Current = Cursors.Default;
-                        }
-                    });
+                    return this.WalkDirectoryTree(
+                        directoryInfo,
+                        outputProgress);
+                })));
+
+                this.AddFilesToDeleteToGrid(filesToDelete.SelectMany(x => x), outputProgress, gridProgress);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
 
             outputProgress.Report("Finished!");
             this.InitControls();
@@ -747,14 +754,11 @@ namespace DupImageDeleter
                                                  OriginalImagePath = folder + @"\" + originalImage,
                                                  DupImagePath = folder + @"\" + dupImage
                                              };
-                viewer.ShowDialog(this);
-                viewer.FormClosed += (s1, e1) => 
-                { 
-                    if(viewer.DeleteRow)
-                    {
-                        grdOutput.Rows.Remove(grdOutput.Rows[e.RowIndex]);
-                    }
-                };
+
+                if (viewer.ShowDialog(this) == DialogResult.Abort)
+                {
+                    grdOutput.Rows.Remove(grdOutput.Rows[e.RowIndex]);
+                }
             }
         }
 
