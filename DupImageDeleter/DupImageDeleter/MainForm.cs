@@ -604,7 +604,9 @@ namespace DupImageDeleter
 
             List<DirectoryInfo> allDirectoryInfos = root.GetDirectories("*", searchOption)
                 .Where(x => !this.CompareString(x.Name, "Cache"))
-                .Where(x => !this.chkExcludeGameplay.Checked || (!x.FullName.Contains("Screenshot - Gameplay") && !x.FullName.Contains("Fanart - ")))
+                .Where(x => !this.chkExcludeGameplay.Checked || (!x.FullName.Contains("Screenshot - Gameplay") 
+                && !x.FullName.Contains("Fanart - ")
+                && !x.FullName.Contains("Advertisement Flyer - ")))
                 .ToList();
 
             allDirectoryInfos.Insert(0, root);
@@ -932,6 +934,38 @@ namespace DupImageDeleter
             /// Gets or sets the duplicate file.
             /// </summary>
             public string DuplicateFile { get; set; }
+        }
+
+        private void btnViewDiffs_Click(object sender, EventArgs e)
+        {
+            List<DataGridViewRow> rows = new List<DataGridViewRow>();
+
+            foreach (DataGridViewRow row in grdOutput.Rows)
+            {
+                rows.Add(row);
+            }
+            
+            foreach(DataGridViewRow row in rows)
+            {
+                string folder = row.Cells["Folder"].Value?.ToString();
+                string originalImage = row.Cells["OriginalImage"].Value?.ToString();
+                string dupImage = row.Cells["DuplicateImage"].Value?.ToString();
+
+                ImageViewerForm viewer = new ImageViewerForm
+                {
+                    OriginalImagePath = folder + @"\" + originalImage,
+                    DupImagePath = folder + @"\" + dupImage
+                };
+
+                if (viewer.ShowDialog(this) == DialogResult.Abort)
+                {
+                    grdOutput.Rows.Remove(row);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 }

@@ -33,6 +33,7 @@
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.btnDirectorySelector = new System.Windows.Forms.Button();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.chkExcludeGameplay = new System.Windows.Forms.CheckBox();
             this.chkLikeFileNames = new System.Windows.Forms.CheckBox();
             this.chkSearchTopDirectoriesOnly = new System.Windows.Forms.CheckBox();
             this.chkPreferHigherResolution = new System.Windows.Forms.CheckBox();
@@ -63,8 +64,8 @@
             this.radPreview = new System.Windows.Forms.RadioButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.txtImageDirectory = new System.Windows.Forms.TextBox();
-            this.chkExcludeGameplay = new System.Windows.Forms.CheckBox();
             this.progressBar = new DupImageDeleter.TextProgressBar();
+            this.btnViewDiffs = new System.Windows.Forms.Button();
             this.grpOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdOutput)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -122,6 +123,16 @@
             this.grpOptions.TabIndex = 0;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Search Options";
+            // 
+            // chkExcludeGameplay
+            // 
+            this.chkExcludeGameplay.AutoSize = true;
+            this.chkExcludeGameplay.Location = new System.Drawing.Point(6, 158);
+            this.chkExcludeGameplay.Name = "chkExcludeGameplay";
+            this.chkExcludeGameplay.Size = new System.Drawing.Size(155, 17);
+            this.chkExcludeGameplay.TabIndex = 8;
+            this.chkExcludeGameplay.Text = "Exclude Gameplay / Fanart";
+            this.chkExcludeGameplay.UseVisualStyleBackColor = true;
             // 
             // chkLikeFileNames
             // 
@@ -429,16 +440,6 @@
             this.txtImageDirectory.TabIndex = 1;
             this.txtImageDirectory.TextChanged += new System.EventHandler(this.TxtImageDirectoryTextChanged);
             // 
-            // chkExcludeGameplay
-            // 
-            this.chkExcludeGameplay.AutoSize = true;
-            this.chkExcludeGameplay.Location = new System.Drawing.Point(6, 158);
-            this.chkExcludeGameplay.Name = "chkExcludeGameplay";
-            this.chkExcludeGameplay.Size = new System.Drawing.Size(155, 17);
-            this.chkExcludeGameplay.TabIndex = 8;
-            this.chkExcludeGameplay.Text = "Exclude Gameplay / Fanart";
-            this.chkExcludeGameplay.UseVisualStyleBackColor = true;
-            // 
             // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -446,8 +447,19 @@
             this.progressBar.ForeColor = System.Drawing.SystemColors.ControlText;
             this.progressBar.Location = new System.Drawing.Point(12, 633);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(839, 23);
+            this.progressBar.Size = new System.Drawing.Size(758, 23);
             this.progressBar.TabIndex = 4;
+            // 
+            // btnViewDiffs
+            // 
+            this.btnViewDiffs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewDiffs.Location = new System.Drawing.Point(776, 633);
+            this.btnViewDiffs.Name = "btnViewDiffs";
+            this.btnViewDiffs.Size = new System.Drawing.Size(75, 23);
+            this.btnViewDiffs.TabIndex = 13;
+            this.btnViewDiffs.Text = "View Images";
+            this.btnViewDiffs.UseVisualStyleBackColor = true;
+            this.btnViewDiffs.Click += new System.EventHandler(this.btnViewDiffs_Click);
             // 
             // MainForm
             // 
@@ -455,6 +467,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(944, 668);
+            this.Controls.Add(this.btnViewDiffs);
             this.Controls.Add(this.pnlOptions);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.tabControl1);
@@ -520,6 +533,7 @@
         private System.Windows.Forms.RadioButton radMoveToUS;
         private System.Windows.Forms.CheckBox chkLikeFileNames;
         private System.Windows.Forms.CheckBox chkExcludeGameplay;
+        private System.Windows.Forms.Button btnViewDiffs;
     }
 }
 
